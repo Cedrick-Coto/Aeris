@@ -1,0 +1,17 @@
+graph TD
+    subgraph "Aeris.Engine"
+        Engine[Engine]
+        World[World]
+        Stats[EngineStats]
+    end
+
+    subgraph "Resources"
+        Time[TimeResource]
+        Random[RandomResource]
+    end
+
+    Engine --> World
+    World --> Stats
+    World --> Time
+    World --> Random
+    Engine -->|RunOneTick| World

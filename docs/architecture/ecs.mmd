@@ -1,0 +1,13 @@
+graph TD
+    subgraph "ECS Pattern"
+        Entity[Entity<br/>ID only]
+        Component[Component<br/>Data only]
+        System[System<br/>Logic only]
+        World[World<br/>Container]
+    end
+
+    Entity -->|has many| Component
+    World -->|stores| Entity
+    World -->|stores| Component
+    System -->|reads/writes| Component
+    System -->|queries| World
