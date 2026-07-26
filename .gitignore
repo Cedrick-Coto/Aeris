@@ -1,0 +1,49 @@
+# Build outputs
+/bin/
+/obj/
+/debug/
+/release/
+
+# IDE files
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.csproj.user
+
+# NuGet packages
+/packages/
+*.nupkg
+*.snupkg
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Backup files
+*.bak
+*.tmp
+backups/
+
+# Database files
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Log files
+*.log
+logs/
+
+# Environment files
+.env
+.env.local
+
+# Local configuration
+appsettings.Local.json
+
+# Temp files
+/tmp/
+/temp/
