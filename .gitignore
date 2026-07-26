@@ -1,49 +1,32 @@
-# Build outputs
-/bin/
-/obj/
-/debug/
-/release/
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
 
-# IDE files
-.vs/
-.vscode/
-.idea/
-*.user
-*.suo
-*.csproj.user
-
-# NuGet packages
-/packages/
+## NuGet
 *.nupkg
 *.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
 
-# OS files
+## Rider
+.idea/
+*.sln.iml
+
+## VS Code
+.vscode/
+
+## OS
 .DS_Store
 Thumbs.db
-desktop.ini
 
-# Backup files
-*.bak
-*.tmp
-backups/
-
-# Database files
-*.db
-*.db-journal
-*.db-shm
-*.db-wal
-
-# Log files
-*.log
-logs/
-
-# Environment files
-.env
-.env.local
-
-# Local configuration
-appsettings.Local.json
-
-# Temp files
-/tmp/
-/temp/
+## BenchmarkDotNet
+BenchmarkDotNet.Artifacts/

@@ -1,7 +1,7 @@
 # Persistencia
 
 **Versión**: 0.1  
-**Estado**: Sprint 0 — Especificación  
+**Estado**: Sprint 0 — FROZEN  
 **Última actualización**: 2026-07-26  
 **ADR relacionado**: [ADR-0002](adr/0002-use-sqlite-json.md)
 

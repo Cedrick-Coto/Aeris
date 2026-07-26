@@ -1,7 +1,7 @@
 # Contrato del LLM
 
 **Versión**: 0.1  
-**Estado**: Sprint 0 — Especificación  
+**Estado**: Sprint 0 — FROZEN  
 **Última actualización**: 2026-07-26  
 **ADR relacionado**: [ADR-0004](adr/0004-llm-as-function.md)
 

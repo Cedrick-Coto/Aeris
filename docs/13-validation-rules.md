@@ -1,7 +1,7 @@
 # 13. Reglas de Validación
 
 **Versión**: 0.1  
-**Estado**: Sprint 0 — Especificación  
+**Estado**: Sprint 0 — FROZEN  
 **Última actualización**: 2026-07-26
 
 ---

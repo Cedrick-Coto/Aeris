@@ -1,0 +1,15 @@
+graph TD
+    A[RunOneTick] --> B[Update Time]
+    B --> C[Execute Systems]
+    C --> D[Flush Events]
+    D --> E[Update Stats]
+
+    subgraph "TimeResource"
+        F[SimulationTime]
+        G[DeltaSimulation]
+        H[Tick]
+    end
+
+    B --> F
+    B --> G
+    B --> H
