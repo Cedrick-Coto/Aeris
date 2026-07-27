@@ -5,7 +5,6 @@ namespace Aeris.Engine;
 public sealed class Engine
 {
     private readonly World _world;
-    private long _tick;
 
     public Engine(World world)
     {
@@ -14,18 +13,22 @@ public sealed class Engine
 
     public void RunOneTick(float deltaTime = 1f)
     {
-        _tick++;
+        var time = _world.GetResource<TimeResource>();
         var stats = _world.GetResource<EngineStats>();
         var stopwatch = Stopwatch.StartNew();
 
-        stats.Tick = _tick;
+        time.Advance(deltaTime);
+
+        stats.Tick = time.Tick;
         stats.TickDuration = 0;
         stats.SystemsExecuted = 0;
 
         stopwatch.Stop();
         stats.TickDuration = stopwatch.Elapsed.TotalMilliseconds;
+
+        _world.SetResource(time);
         _world.SetResource(stats);
     }
 
-    public long Tick => _tick;
+    public long Tick => _world.GetResource<TimeResource>().Tick;
 }

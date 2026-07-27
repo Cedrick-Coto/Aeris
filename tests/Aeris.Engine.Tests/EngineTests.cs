@@ -8,8 +8,7 @@ public class EngineTests
     [Fact]
     public void RunOneTick_ShouldExecuteWithoutErrors()
     {
-        var world = new World();
-        world.AddResource(new EngineStats());
+        var world = CreateWorld();
 
         var engine = new Engine(world);
 
@@ -21,8 +20,7 @@ public class EngineTests
     [Fact]
     public void RunOneTick_ShouldIncrementTick()
     {
-        var world = new World();
-        world.AddResource(new EngineStats());
+        var world = CreateWorld();
 
         var engine = new Engine(world);
 
@@ -34,8 +32,7 @@ public class EngineTests
     [Fact]
     public void RunMultipleTicks_ShouldIncrementCorrectly()
     {
-        var world = new World();
-        world.AddResource(new EngineStats());
+        var world = CreateWorld();
 
         var engine = new Engine(world);
 
@@ -49,8 +46,7 @@ public class EngineTests
     [Fact]
     public void RunOneTick_ShouldUpdateStats()
     {
-        var world = new World();
-        world.AddResource(new EngineStats());
+        var world = CreateWorld();
 
         var engine = new Engine(world);
 
@@ -59,5 +55,13 @@ public class EngineTests
         var stats = world.GetResource<EngineStats>();
         stats.Tick.Should().Be(1);
         stats.TickDuration.Should().BeGreaterThanOrEqualTo(0);
+    }
+
+    private static World CreateWorld()
+    {
+        var world = new World();
+        world.AddResource(TimeResource.Create());
+        world.AddResource(new EngineStats());
+        return world;
     }
 }
