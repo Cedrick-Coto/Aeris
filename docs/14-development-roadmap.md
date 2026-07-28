@@ -373,8 +373,7 @@ Events
 ## 6. Sprint 2 — Semantic Extractor
 
 **Objetivo**: Extraer del estado del mundo el subconjunto que el LLM necesita. Este sprint ocurre antes de la arquitectura cognitiva porque el Semantic Extractor define el contrato de datos que los subsistemas cognitivos deben producir.
-
-**Estado**: Pendiente.
+**Estado**: ✅ Completado (v0.2.0-semantics)
 
 ### Alcance
 
