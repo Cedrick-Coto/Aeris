@@ -38,6 +38,13 @@ public struct TimeResource
         UpdateCalendar();
     }
 
+    public void SetFromSnapshot(long tick, double simulationTime)
+    {
+        Tick = tick;
+        SimulationTime = simulationTime;
+        UpdateCalendar();
+    }
+
     private void UpdateCalendar()
     {
         const double SecondsPerDay = 86400.0;

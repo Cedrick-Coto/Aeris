@@ -1,0 +1,70 @@
+# EventBus Architecture
+
+```mermaid
+graph TD
+    subgraph EventBus
+        direction LR
+        NQ[nextQueue<br/>Deferred events accumulate]
+        CQ[currentQueue<br/>Events being processed]
+    end
+
+    S1[System A] -->|Emit Deferred| NQ
+    S2[System B] -->|Emit Immediate| IH[Immediate Handler]
+
+    subgraph Tick Lifecycle
+        direction TB
+        AT[1. AdvanceTick<br/>nextQueue → currentQueue] --> TE[2. Systems Execute<br/>May emit events to nextQueue]
+        TE --> FL[3. Flush<br/>Dispatch currentQueue to handlers]
+        FL --> NE[4. Events emitted during Flush<br/>Go to nextQueue for next tick]
+    end
+
+    NQ -->|AdvanceTick| CQ
+    CQ -->|Flush| H1[Handler 1]
+    CQ -->|Flush| H2[Handler 2]
+    CQ -->|Flush| H3[Handler N]
+
+    IH --> SH[System Handler]
+
+    style NQ fill:#4a9eff,color:#fff
+    style CQ fill:#ff6b4a,color:#fff
+    style AT fill:#2d8f2d,color:#fff
+    style FL fill:#8f2d2d,color:#fff
+```
+
+## Queue Swap Animation
+
+```mermaid
+sequenceDiagram
+    participant Engine
+    participant EventBus
+    participant Systems
+    participant Handlers
+
+    Engine->>EventBus: AdvanceTick()
+    Note over EventBus: Swap queues<br/>nextQueue → currentQueue<br/>Clear old currentQueue
+
+    Engine->>Systems: ExecuteAll()
+    Systems->>EventBus: Emit Deferred → nextQueue
+    Systems->>EventBus: Emit Immediate → Handlers
+
+    Engine->>EventBus: Flush()
+    EventBus->>Handlers: Process currentQueue events
+    Note over EventBus: Events emitted during Flush<br/>go to nextQueue
+```
+
+## Dispatch Types
+
+| Type | When | Processing |
+|------|------|------------|
+| Deferred | Default for all events | Queued in nextQueue, processed next tick |
+| Immediate | Fatal errors only (FatalError, EngineShutdown) | Processed inline at emit time |
+
+## Rules
+
+1. Deferred events accumulate in `nextQueue` and process in the following tick
+2. Immediate events process immediately (fatal errors only)
+3. A System cannot read the result of its own event in the same tick
+4. A System may emit multiple events per tick
+5. Events are processed in FIFO order
+6. Events emitted during `Flush` go to `nextQueue`, not the current `currentQueue`
+7. Max 10,000 events per tick (configurable). Excess discarded with overflow flag

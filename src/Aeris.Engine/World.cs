@@ -57,12 +57,12 @@ public sealed class World
 
     public IReadOnlyDictionary<EntityId, Entity> Entities => _entities;
 
-    public void AddResource<T>(T resource) where T : struct
+    public void AddResource<T>(T resource) where T : notnull
     {
         _resources[typeof(T)] = resource;
     }
 
-    public T GetResource<T>() where T : struct
+    public T GetResource<T>() where T : notnull
     {
         if (!_resources.TryGetValue(typeof(T), out var obj))
         {
@@ -72,13 +72,29 @@ public sealed class World
         return (T)obj;
     }
 
-    public void SetResource<T>(T resource) where T : struct
+    public void SetResource<T>(T resource) where T : notnull
     {
         _resources[typeof(T)] = resource;
     }
 
-    public bool HasResource<T>() where T : struct
+    public bool HasResource<T>() where T : notnull
     {
         return _resources.ContainsKey(typeof(T));
+    }
+
+    public IEnumerable<Type> GetResourceTypes()
+    {
+        return _resources.Keys;
+    }
+
+    public object? GetResourceDynamic(Type type)
+    {
+        return _resources.TryGetValue(type, out var obj) ? obj : null;
+    }
+
+    public void AddResourceDynamic(Type type, object resource)
+    {
+        Debug.Assert(resource != null, "Resource cannot be null");
+        _resources[type] = resource;
     }
 }

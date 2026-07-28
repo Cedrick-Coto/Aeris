@@ -1,32 +1,16 @@
 using Aeris.Engine;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Jobs;
+using BenchmarkDotNet.Running;
+using BenchmarkDotNet.Toolchains.InProcess.NoEmit;
 
-// Parse --seed for deterministic RNG (infrastructure for when randomness is added)
-int? seed = null;
-for (int i = 0; i < args.Length; i++)
-{
-    if (args[i] == "--seed" && i + 1 < args.Length)
-        seed = int.Parse(args[i + 1]);
-}
+var config = DefaultConfig.Instance
+    .WithOptions(ConfigOptions.DisableOptimizationsValidator)
+    .AddJob(Job.ShortRun
+        .WithWarmupCount(1)
+        .WithIterationCount(3)
+        .WithToolchain(InProcessNoEmitToolchain.Instance));
 
-var world = new World();
-world.AddResource(TimeResource.Create());
-world.AddResource(new EngineStats());
-
-var engine = new Engine(world);
-
-if (seed.HasValue)
-    Console.WriteLine($"Seed: {seed}");
-
-Console.WriteLine("Aeris Engine - Sprint 1.1");
-Console.WriteLine("========================");
-Console.WriteLine();
-
-for (int i = 0; i < 5; i++)
-{
-    engine.RunOneTick();
-    var stats = world.GetResource<EngineStats>();
-    Console.WriteLine($"Tick {stats.Tick}: {stats.TickDuration:F4}ms");
-}
-
-Console.WriteLine();
-Console.WriteLine("Engine executed 5 ticks successfully.");
+BenchmarkSwitcher.FromTypes([
+    typeof(Aeris.Benchmarks.EngineTickBenchmarks),
+]).RunAll(config);

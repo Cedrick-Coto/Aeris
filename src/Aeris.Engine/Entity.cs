@@ -19,6 +19,11 @@ public sealed class Entity
         _components[typeof(T)] = component;
     }
 
+    public void SetComponent<T>(T component) where T : unmanaged
+    {
+        _components[typeof(T)] = component;
+    }
+
     public T GetComponent<T>() where T : unmanaged
     {
         Debug.Assert(_components.ContainsKey(typeof(T)), $"Component {typeof(T).Name} not found on entity {Id}");
