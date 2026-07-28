@@ -100,22 +100,22 @@ Aeris/
 ## Roadmap de Desarrollo
 
 ```
-Sprint 0 ──► Sprint 1 ──► Sprint 2 ──► Sprint 3 ──► Sprint 4 ──► Sprint 5 ──► Sprint 6 ──► Sprint 7 ──► Sprint 8
-Arquitec.    Motor ECS    Cognición   Afecto       Self          LLM          Narrativa    Mundo Pokémon  Aeris
-(FROZEN)     (COMPL.)     (Determ.)   (Sist. Transv.) (Emergente)  (Verbaliz.)  (Pipeline)   (Modelado)     (Personaje)
+Sprint 0 ──► Sprint 1 ──► Sprint 2 ──► Sprint 3 ──► Sprint 4 ──► Sprint 5 ──► Sprint 6 ──► Sprint 7
+Arquitec.    Motor ECS    Sem. Extr.   Cog.+Af.      LLM          Narrativa    Mundo Pok.   Aeris
+(FROZEN)     (COMPL.)     (Pend.)      +Self         (Verbaliz.)  (Pipeline)   (Modelado)   (Personaje)
+                                        (3.1–3.7)
 ```
 
 | Sprint   | Estado     | Objetivo                                                                                       |
 | -------- | ---------- | ---------------------------------------------------------------------------------------------- |
 | Sprint 0 | ✅ Frozen   | Especificación arquitectónica y ADRs                                                           |
 | Sprint 1 | ✅ Complete | Motor ECS determinista (World, Systems, EventBus, Scheduler, Persistence)                      |
-| Sprint 2 | ⏳ Planned  | Arquitectura Cognitiva (Percepción, Atención, Memoria, Creencias, Razonamiento, Planificación) |
-| Sprint 3 | ⏳ Planned  | Arquitectura Afectiva (Emoción, Motivación, Necesidades, Apego, Regulación)                    |
-| Sprint 4 | ⏳ Planned  | Modelo Emergente del Self (Autobiografía, Reflexión, Meta-Reflexión, Identidad emergente)      |
-| Sprint 5 | ⏳ Planned  | Integración LLM (Semantic Extractor → Prompt Builder → LLM)                                    |
-| Sprint 6 | ⏳ Planned  | Narrativa (Diálogo, Monólogo interno, Narración contextual)                                    |
-| Sprint 7 | ⏳ Planned  | Mundo Pokémon (Biología, Aura, Ecosistemas, Cultura, Lenguaje)                                 |
-| Sprint 8 | ⏳ Planned  | Aeris (Personaje completo e integración final)                                                 |
+| Sprint 2 | ⏳ Planned  | Semantic Extractor (extraer estado del mundo → SemanticState para el LLM)                      |
+| Sprint 3 | ⏳ Planned  | Arquitectura Cognitiva (Percepción, Afecto, Cognición, Self, Metauditor, Aprendizaje)          |
+| Sprint 4 | ⏳ Planned  | Integración LLM (verbalizador, no pensador)                                                    |
+| Sprint 5 | ⏳ Planned  | Narrativa (Diálogo, Monólogo interno, Narración contextual)                                    |
+| Sprint 6 | ⏳ Planned  | Mundo Pokémon (Biología, Aura, Ecosistemas, Cultura, Lenguaje, Facciones)                      |
+| Sprint 7 | ⏳ Planned  | Aeris (Personaje completo e integración final)                                                 |
 
 ---
 
