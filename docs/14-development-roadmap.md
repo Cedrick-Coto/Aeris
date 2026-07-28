@@ -69,7 +69,7 @@ Todos los documentos revisados y consistentes entre sí. Ninguna decisión arqui
 ## 5. Sprint 1 — Motor ECS
 
 **Objetivo**: Verificar que el motor funciona. Tick completo con ECS, EventBus, Scheduler, Time, y Persistencia. **Motor completamente determinista.**  
-**Estado**: ✅ Completado.
+**Estado**: ✅ Completado (v0.1.0-engine)
 
 ### Requisito fundamental: Determinismo
 
@@ -308,6 +308,65 @@ Aeris/
 ### Diagramas vivos
 
 Los diagramas en `docs/architecture/` reflejan la implementación real, no la especificación. Se actualizan cuando cambia el código.
+
+---
+
+## 5. Sprint 1.5 — ECS Cognitivo
+
+**Objetivo**: Añadir la capa cognitiva determinista. Todo funciona sin LLM.
+**Estado**: ✅ Completado (v0.1.0-engine)
+
+### Alcance
+
+```
+Components
+├── MemoryComponent
+├── KnowledgeComponent
+├── BeliefComponent
+├── EmotionComponent
+├── GoalComponent
+├── AttentionComponent
+├── RelationshipComponent
+│
+Systems
+├── MemoryConsolidationSystem
+├── KnowledgeUpdateSystem
+├── EmotionProcessingSystem
+├── GoalEvaluationSystem
+├── AttentionUpdateSystem
+├── RelationshipSystem
+│
+Events
+├── MemoryCreatedEvent
+├── KnowledgeAcquiredEvent
+├── EmotionChangedEvent
+├── GoalCompletedEvent
+├── RelationshipChangedEvent
+```
+
+### Entregables
+- 7 Components cognitivos
+- 6 Systems cognitivos
+- Events correspondientes
+- Tests para cada System
+- Test de integración: percepción → memoria → emoción → goal
+
+### Definition of Done
+1. Un Entity puede percibir, recordar, sentir, y tener goals
+2. Las memorias se degradan correctamente
+3. Las emociones se activan por triggers y se disipan
+4. Los goals se evalúan y priorizan
+5. Las relationships se mantienen bidireccionales
+6. Todo funciona sin LLM (determinista)
+7. Tests pasan
+
+### Métricas mínimas
+- Build: 0 errores, 0 warnings
+- Tests: cobertura > 80% para Systems cognitivos
+- Performance: tick completo < 2ms con 100 entities
+
+### Dependencias
+- Sprint 1 completo
 
 ---
 
