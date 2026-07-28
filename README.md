@@ -6,51 +6,40 @@ Aeris no es un chatbot ni un juego con guion. Es un **simulador de mundo** donde
 
 ---
 
-## Principios Fundamentales
+## Principios Arquitectónicos
 
-1. **Simulación primero, narrativa después** — La IA nunca decide qué sucede para producir una escena interesante. Primero simula un mundo coherente; la historia emerge como consecuencia.
-2. **Separación absoluta entre simulación y presentación** — El motor funciona sin interfaz, sin LLM, sin persistencia. Cada capa es independiente.
-3. **El LLM es una función, no un controlador** — Recibe estado estructurado y produce estado estructurado. Nunca muta el World State.
-4. **El mundo existe sin el usuario** — El tiempo avanza independientemente de la interacción. Los personajes actúan, el clima cambia, los eventos ocurren.
-5. **Extensibilidad por diseño** — Nuevos componentes, sistemas y reglas se añaden sin reescribir el núcleo.
+- **ECS + Data-Oriented Design** como base del motor.
+- **Determinismo** como requisito del núcleo de simulación.
+- **Separación estricta** entre simulación, cognición, afecto y narrativa.
+- El **LLM nunca modifica el estado del mundo**; únicamente interpreta y expresa el estado interno.
+- El **Self** no es un componente explícito: emerge de la integración persistente de memoria, cognición, afecto, relaciones y autobiografía.
+- El proyecto implementa un **modelo funcional de agencia**, no afirma reproducir la conciencia humana.
 
 ---
 
 ## Arquitectura
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Capa de Presentación                      │
-│                        (UI)                                  │
-├─────────────────────────────────────────────────────────────┤
-│                     Capa de Narrativa                        │
-│   Narrative Pipeline → Semantic Extractor → LLM Adapter     │
-├─────────────────────────────────────────────────────────────┤
-│                    Capa de Simulación                        │
-│   EventBus → SystemManager → TimeSystem → WorldOrchestrator │
-├─────────────────────────────────────────────────────────────┤
-│                      Capa de Datos                           │
-│              ECS Core (Arch) → Data Models → Semantic State  │
-├─────────────────────────────────────────────────────────────┤
-│                   Capa de Persistencia                       │
-│                      SQLite + JSON                           │
-└─────────────────────────────────────────────────────────────┘
+                  Mundo
+                    │
+              Simulación ECS
+                    │
+      ┌─────────────┴─────────────┐
+      │                           │
+ Cognición                  Afecto
+      │                           │
+      └─────────────┬─────────────┘
+                    │
+         Modelo Emergente del Self
+                    │
+          Semantic Extractor
+                    │
+            Prompt Builder
+                    │
+                  LLM
+                    │
+          Narrativa / Diálogo
 ```
-
-### Motores del Sistema
-
-| Motor | Responsabilidad |
-|-------|-----------------|
-| **Mundo** | Estado del universo (clima, regiones, economía, eventos) |
-| **Personajes** | Agentes autónomos con estado, memoria, creencias y objetivos |
-| **Cognitivo** | Percepción → Conocimiento → Creencias → Metas → Decisiones |
-| **Social** | Relaciones bidireccionales con historia (confianza, respeto, rivalidad) |
-| **Memoria** | Almacenamiento con degradación, reinterpretación y olvido |
-| **Conocimiento** | Hechos, hipótesis, rumores, mentiras, tradiciones |
-| **Simulación** | El mundo avanza aunque nadie interactúe |
-| **Narrativo** | Transforma estado del mundo en narrativa |
-| **Causalidad** | Cada evento tiene causa y consecuencia |
-| **IA (LLM)** | Interpreta estado del mundo, nunca lo controla |
 
 ---
 
@@ -111,20 +100,22 @@ Aeris/
 ## Roadmap de Desarrollo
 
 ```
-Sprint 0 ──► Sprint 1 ──► Sprint 1.5 ──► Sprint 2 ──► Sprint 3 ──► Sprint 4 ──► Sprint 5
-Especif.     Motor Mín.    ECS Cognit.    Sem. Extr.   LLM          Narrativa     Aeris
-(FROZEN)     (Tick)        (Determinista) (Transl.)    (Integrac.)  (Pipeline)    (Mundo)
+Sprint 0 ──► Sprint 1 ──► Sprint 2 ──► Sprint 3 ──► Sprint 4 ──► Sprint 5 ──► Sprint 6 ──► Sprint 7 ──► Sprint 8
+Arquitec.    Motor ECS    Cognición   Afecto       Self          LLM          Narrativa    Mundo Pokémon  Aeris
+(FROZEN)     (COMPL.)     (Determ.)   (Sist. Transv.) (Emergente)  (Verbaliz.)  (Pipeline)   (Modelado)     (Personaje)
 ```
 
-| Sprint | Estado | Objetivo |
-|--------|--------|----------|
-| **Sprint 0** | ✅ Completado | Arquitectura y especificación |
-| **Sprint 1** | En progreso | Motor mínimo (ECS, EventBus, Scheduler, Time, Persistencia) |
-| **Sprint 1.5** | Pendiente | ECS Cognitivo (memoria, emociones, goals, relaciones) |
-| **Sprint 2** | Pendiente | Semantic Extractor (estado → contexto para LLM) |
-| **Sprint 3** | Pendiente | Integración LLM |
-| **Sprint 4** | Pendiente | Narrative Pipeline |
-| **Sprint 5** | Pendiente | Mundo Pokémon completo |
+| Sprint   | Estado     | Objetivo                                                                                       |
+| -------- | ---------- | ---------------------------------------------------------------------------------------------- |
+| Sprint 0 | ✅ Frozen   | Especificación arquitectónica y ADRs                                                           |
+| Sprint 1 | ✅ Complete | Motor ECS determinista (World, Systems, EventBus, Scheduler, Persistence)                      |
+| Sprint 2 | ⏳ Planned  | Arquitectura Cognitiva (Percepción, Atención, Memoria, Creencias, Razonamiento, Planificación) |
+| Sprint 3 | ⏳ Planned  | Arquitectura Afectiva (Emoción, Motivación, Necesidades, Apego, Regulación)                    |
+| Sprint 4 | ⏳ Planned  | Modelo Emergente del Self (Autobiografía, Reflexión, Meta-Reflexión, Identidad emergente)      |
+| Sprint 5 | ⏳ Planned  | Integración LLM (Semantic Extractor → Prompt Builder → LLM)                                    |
+| Sprint 6 | ⏳ Planned  | Narrativa (Diálogo, Monólogo interno, Narración contextual)                                    |
+| Sprint 7 | ⏳ Planned  | Mundo Pokémon (Biología, Aura, Ecosistemas, Cultura, Lenguaje)                                 |
+| Sprint 8 | ⏳ Planned  | Aeris (Personaje completo e integración final)                                                 |
 
 ---
 

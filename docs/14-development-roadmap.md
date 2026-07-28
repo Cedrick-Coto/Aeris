@@ -1,8 +1,8 @@
 # 14. Development Roadmap
 
-**Versión**: 0.1  
+**Versión**: 0.2  
 **Estado**: Activo  
-**Última actualización**: 2026-07-26
+**Última actualización**: 2026-07-28
 
 ---
 
@@ -14,12 +14,18 @@ Los documentos de Sprint 0 están congelados. Solo se modifican si la implementa
 
 ---
 
-## 2. Progresión de Sprints
+## 2. Filosofía del Proyecto
+
+El objetivo no es "hacer que Aeris piense como un humano", sino **construir una arquitectura funcional cuyos fenómenos cognitivos emerjan de la interacción de subsistemas**, sin programar explícitamente un "yo", una "conciencia" o una "experiencia subjetiva".
+
+---
+
+## 3. Progresión de Sprints
 
 ```
-Sprint 0 ──► Sprint 1 ──► Sprint 1.5 ──► Sprint 2 ──► Sprint 3 ──► Sprint 4 ──► Sprint 5
-Especif.     Motor Mín.    ECS Cognit.    Sem. Extr.   LLM          Narrativa     Aeris
-(FROZEN)     (Tick)        (Determinista) (Transl.)    (Integrac.)  (Pipeline)    (Mundo)
+Sprint 0 ──► Sprint 1 ──► Sprint 2 ──► Sprint 3 ──► Sprint 4 ──► Sprint 5 ──► Sprint 6 ──► Sprint 7 ──► Sprint 8
+Arquitec.    Motor ECS    Cognición   Afecto       Self          LLM          Narrativa    Mundo Pokémon  Aeris
+(FROZEN)     (COMPL.)     (Determ.)   (Sist. Transv.) (Emergente)  (Verbaliz.)  (Pipeline)   (Modelado)     (Personaje)
 ```
 
 ### Dependencias entre Sprints
@@ -27,19 +33,20 @@ Especif.     Motor Mín.    ECS Cognit.    Sem. Extr.   LLM          Narrativa  
 ```
 Sprint 0 (S0)
   └──► Sprint 1 (S1)
-         ├──► Sprint 1.5 (S1.5)
-         │      └──► Sprint 2 (S2)
-         │             └──► Sprint 3 (S3)
-         │                    └──► Sprint 4 (S4)
-         │                           └──► Sprint 5 (S5)
-         └──► (S1.5 no puede empezar sin S1 completo)
+         └──► Sprint 2 (S2)
+                └──► Sprint 3 (S3)
+                       └──► Sprint 4 (S4)
+                              └──► Sprint 5 (S5)
+                                     └──► Sprint 6 (S6)
+                                            └──► Sprint 7 (S7)
+                                                   └──► Sprint 8 (S8)
 ```
 
 **Regla**: Un Sprint no puede iniciar hasta que su dependencia directa esté completa y validada.
 
 ---
 
-## 3. Sprint 0 — Especificación (FROZEN)
+## 4. Sprint 0 — Arquitectura (FROZEN)
 
 **Objetivo**: Definir la arquitectura completa del motor.  
 **Estado**: ✅ Completado y congelado.
@@ -56,9 +63,10 @@ Todos los documentos revisados y consistentes entre sí. Ninguna decisión arqui
 
 ---
 
-## 4. Sprint 1 — Motor Mínimo
+## 5. Sprint 1 — Motor ECS
 
-**Objetivo**: Verificar que el motor funciona. Tick completo con ECS, EventBus, Scheduler, Time, y Persistencia. **Motor completamente determinista.**
+**Objetivo**: Verificar que el motor funciona. Tick completo con ECS, EventBus, Scheduler, Time, y Persistencia. **Motor completamente determinista.**  
+**Estado**: ✅ Completado.
 
 ### Requisito fundamental: Determinismo
 
@@ -300,121 +308,250 @@ Los diagramas en `docs/architecture/` reflejan la implementación real, no la es
 
 ---
 
-## 5. Sprint 1.5 — ECS Cognitivo
+## 6. Sprint 2 — Arquitectura Cognitiva
 
-**Objetivo**: Añadir la capa cognitiva determinista. Todo funciona sin LLM.
+**Objetivo**: Implementar el procesamiento cognitivo. No personalidad. No emociones. No self. Solo cognición.
 
-### Alcance
+**Estado**: Pendiente.
+
+### Módulos
 
 ```
-Components
-├── MemoryComponent
-├── KnowledgeComponent
-├── BeliefComponent
-├── EmotionComponent
-├── GoalComponent
-├── AttentionComponent
-├── RelationshipComponent
-│
-Systems
-├── MemoryConsolidationSystem
-├── KnowledgeUpdateSystem
-├── EmotionProcessingSystem
-├── GoalEvaluationSystem
-├── AttentionUpdateSystem
-├── RelationshipSystem
-│
-Events
-├── MemoryCreatedEvent
-├── KnowledgeAcquiredEvent
-├── EmotionChangedEvent
-├── GoalCompletedEvent
-├── RelationshipChangedEvent
+Perception
+Attention
+Working Memory
+Long-Term Memory
+Beliefs
+Knowledge
+Goals
+Reasoning
+Planning
+Prediction
+Learning
 ```
 
-### Entregables
-- 7 Components cognitivos
-- 6 Systems cognitivos
-- Events correspondientes
-- Tests para cada System
-- Test de integración: percepción → memoria → emoción → goal
+### Issues
+
+#### S2-001 — Perception System
+Entrada: World, Events → Salida: Percepts
+
+#### S2-002 — Attention System
+Selecciona qué entra, qué ignorar, prioridades.
+
+#### S2-003 — Working Memory
+Ventana temporal. Capacidad limitada. Olvido automático.
+
+#### S2-004 — Belief Revision
+Actualizar creencias. Resolver contradicciones.
+
+#### S2-005 — Reasoning Engine
+Inferencias. Predicciones. Hipótesis.
+
+#### S2-006 — Planning
+Generación de planes. Evaluación.
+
+#### S2-007 — Learning
+Actualizar conocimiento.
+
+#### S2-008 — World Model
+Modelo interno. No copia completa del mundo.
+
+#### S2-009 — Semantic Extractor v2
+Extrae únicamente estados cognitivos.
 
 ### Definition of Done
-1. Un Entity puede percibir, recordar, sentir, y tener goals
-2. Las memorias se degradan correctamente
-3. Las emociones se activan por triggers y se disipan
-4. Los goals se evalúan y priorizan
-5. Las relationships se mantienen bidireccionales
-6. Todo funciona sin LLM (determinista)
-7. Tests pasan
+1. El sistema de percepción traduce eventos del mundo a perceptos
+2. El sistema de atención filtra y prioriza perceptos
+3. Working Memory mantiene una ventana temporal con olvido automático
+4. El sistema de creencias actualiza y resuelve contradicciones
+5. El motor de razonamiento genera inferencias, predicciones e hipótesis
+6. El sistema de planning genera y evalúa planes
+7. El sistema de aprendizaje actualiza conocimiento
+8. World Model es una representación parcial, no una copia del mundo
+9. Semantic Extractor v2 extrae exclusivamente estados cognitivos
+10. Todo funciona sin emociones, sin self, sin LLM (determinista)
+11. Tests pasan
 
 ### Métricas mínimas
 - Build: 0 errores, 0 warnings
-- Tests: cobertura > 80% para Systems cognitivos
-- Performance: tick completo < 2ms con 100 entities
+- Tests: cobertura > 80% para sistemas cognitivos
+- Performance: tick completo < 3ms con 100 entities
 
 ### Dependencias
 - Sprint 1 completo
 
 ---
 
-## 6. Sprint 2 — Semantic Extractor
+## 7. Sprint 3 — Arquitectura Afectiva
 
-**Objetivo**: Extraer del estado del mundo el subconjunto que el LLM necesita.
+**Objetivo**: Implementar regulación afectiva funcional. La emoción deja de ser un dato y se convierte en un sistema transversal que modifica atención, memoria, planning, predicción, decisión y aprendizaje.
 
-### Alcance
+**Estado**: Pendiente.
+
+### Componentes
 
 ```
-SemanticExtractor
-├── Entity extraction (qué entities son relevantes)
-├── Context extraction (qué está pasando alrededor)
-├── Memory extraction (qué recuerda el entity)
-├── Emotion extraction (qué siente)
-├── Goal extraction (qué quiere)
-├── Relationship extraction (con quién se relaciona)
-│
-SemanticState (output)
-├── Target entity info
-├── Nearby entities summary
-├── Current situation
-├── Relevant memories
-├── Emotional state
-├── Active goals
-├── Key relationships
-│
-PromptBuilder
-├── System instructions
-├── Semantic state serialization
-├── Player input formatting
-├── Output schema definition
+EmotionState
+Mood
+Stress
+Motivation
+Needs
+Attachment
+Confidence
+Uncertainty
 ```
 
-### Entregables
-- `SemanticExtractor` que produce `SemanticState`
-- `PromptBuilder` que construye prompts
-- Tests de extracción
-- Test de integración: world state → semantic state → prompt
+### Systems
+
+```
+Emotion Update
+Motivation
+Need Satisfaction
+Mood Dynamics
+Attachment Update
+Stress Recovery
+```
+
+### Importante
+
+La emoción modifica:
+- Attention
+- Memory
+- Planning
+- Prediction
+- Decision
+- Learning
+
+No solo almacena un enum.
 
 ### Definition of Done
-1. Dado un world state, el extractor produce un SemanticState válido
-2. El SemanticState contiene solo información relevante
-3. El tamaño del SemanticState es razonable (< 4000 tokens)
-4. El PromptBuilder genera prompts válidos
-5. Tests pasan
+1. EmotionState es un sistema continuo (no un enum discreto)
+2. Mood tiene inercia y cambia lentamente
+3. Stress afecta el rendimiento cognitivo
+4. Motivation impulsa la selección de objetivos
+5. Needs se satisfacen y degradan con el tiempo
+6. Attachment modifica relaciones con entidades significativas
+7. Confidence y Uncertainty afectan la toma de decisiones
+8. Todos los sistemas afectivos modifican cognición (attention, memory, planning, etc.)
+9. Tests pasan
 
 ### Métricas mínimas
-- SemanticState size: < 4000 tokens promedio
-- Extracción time: < 10ms
-- Tests: cobertura > 70%
+- Build: 0 errores, 0 warnings
+- Tests: cobertura > 75%
+- Performance: tick completo < 4ms con 100 entities
 
 ### Dependencias
-- Sprint 1.5 completo
+- Sprint 2 completo
 
 ---
 
-## 7. Sprint 3 — LLM Integration
+## 8. Sprint 4 — Modelo Emergente del Self
 
-**Objetivo**: Integrar el LLM como función pura. El LLM nunca controla, solo narra.
+**Objetivo**: Implementar los procesos que producen un modelo funcional del self sin almacenar un componente "Self" persistente. El self emerge de la interacción entre autobiografía, relaciones, objetivos, hábitos, conocimiento y emoción.
+
+**Estado**: Pendiente.
+
+### Módulos
+
+```
+Autobiographical Memory
+Identity Extractor
+Self Model
+Self Consistency
+Reflection
+Meta Reflection
+```
+
+### Flujo
+
+```
+Historia
++
+Relaciones
++
+Objetivos
++
+Hábitos
++
+Conocimiento
++
+Emoción
+↓
+Self Model
+```
+
+### Self Model
+
+Debe responder preguntas como:
+- ¿Qué sé de mí?
+- ¿Qué puedo hacer?
+- ¿Qué quiero?
+- ¿Cómo he cambiado?
+- ¿Quiénes son importantes?
+- ¿Qué temo?
+- ¿Qué espero?
+
+Nunca existe como objeto fijo. Siempre se reconstruye.
+
+### Reflection
+
+Pensamiento interno. Ejemplo:
+
+```
+fallé
+↓
+¿por qué?
+↓
+actualizo creencias
+↓
+cambio estrategia
+```
+
+### Meta Reflection
+
+Evalúa principios, estrategias y hábitos. No modifica el código. Modifica el estado interno.
+
+### Definition of Done
+1. Autobiographical Memory registra experiencias con contexto temporal y afectivo
+2. Identity Extractor produce rasgos emergentes del estado interno
+3. Self Model se reconstruye cada vez que se consulta (nunca se almacena como objeto fijo)
+4. Self Consistency detecta contradicciones en el modelo del self
+5. Reflection ejecuta ciclos de causa-efecto sobre eventos pasados
+6. Meta Reflection evalúa principios y estrategias
+7. El self responde preguntas sobre identidad, capacidad, deseos y cambios
+8. Tests pasan
+
+### Métricas mínimas
+- Build: 0 errores, 0 warnings
+- Tests: cobertura > 70%
+- Performance: tick completo < 5ms con 100 entities
+
+### Dependencias
+- Sprint 3 completo
+
+---
+
+## 9. Sprint 5 — Integración LLM
+
+**Objetivo**: Integrar el LLM como verbalizador, no como pensador. El LLM nunca modifica beliefs, emotion, memory, goals o world. Solo propone y narra.
+
+**Estado**: Pendiente.
+
+### Flujo
+
+```
+World
+↓
+Semantic Extractor
+↓
+Self Model
+↓
+Prompt Builder
+↓
+LLM
+↓
+Narrativa
+```
 
 ### Alcance
 
@@ -425,12 +562,28 @@ ILLMAdapter
 ├── Ollama adapter (local)
 ├── Mock adapter (testing)
 │
+SemanticExtractor
+├── Entity extraction
+├── Context extraction
+├── Memory extraction
+├── Emotion extraction
+├── Goal extraction
+├── Relationship extraction
+│
+SelfModel → PromptBuilder
+├── System instructions
+├── Semantic state serialization
+├── Player input formatting
+├── Output schema definition
+│
 LLMRequest / LLMResponse
 ├── Request: semantic state + player input + constraints
 ├── Response: narrative + dialogue + thoughts + actions + confidence
 │
 LLMSystem
 ├── Build semantic state
+├── Extract Self Model
+├── Build prompt
 ├── Call LLM adapter
 ├── Parse response
 ├── Validate response
@@ -446,18 +599,21 @@ Validation
 ### Entregables
 - `ILLMAdapter` interface
 - 4 adapters (OpenAI, Claude, Ollama, Mock)
+- `SemanticExtractor` que produce `SemanticState`
+- `SelfModel` integrado en el prompt builder
 - `LLMSystem` funcional
 - Validación de respuestas
 - Tests con Mock adapter
-- Test de integración: world → LLM → response
+- Test de integración: world → Self Model → LLM → response
 
 ### Definition of Done
-1. Se puede conectar a al menos un provider real
-2. El Mock adapter funciona para tests
-3. Las respuestas se validan contra el esquema
-4. El retry logic funciona
-5. Los fallback responses funcionan
-6. Tests pasan
+1. El LLM nunca modifica directamente Beliefs, Emotion, Memory, Goals o World
+2. Se puede conectar a al menos un provider real
+3. El Mock adapter funciona para tests
+4. Las respuestas se validan contra el esquema
+5. El retry logic funciona
+6. Los fallback responses funcionan
+7. Tests pasan
 
 ### Métricas mínimas
 - LLM response time: < 5s (excluyendo network)
@@ -465,13 +621,15 @@ Validation
 - Tests: cobertura > 70%
 
 ### Dependencias
-- Sprint 2 completo
+- Sprint 4 completo
 
 ---
 
-## 8. Sprint 4 — Narrative Pipeline
+## 10. Sprint 6 — Narrativa
 
-**Objetivo**: Transformar respuestas del LLM en narrativa para el usuario.
+**Objetivo**: El agente ya existe. Ahora aprende a hablar.
+
+**Estado**: Pendiente.
 
 ### Alcance
 
@@ -488,17 +646,31 @@ NarrativeQueue
 ├── Priority ordering
 ├── Deduplication
 │
+Dialogue Generation
+├── Character voice
+├── Emotional tone mapping
+├── Context-appropriate responses
+│
+Internal Monologue
+├── Self-reflection verbalization
+├── Goals articulation
+├── Conflict expression
+│
 Presentation
 ├── Text formatting
 ├── Dialogue formatting
 ├── Action formatting
 ├── Thought formatting
+├── Descriptions adapted to context
 ```
 
 ### Entregables
 - `NarrativePipeline` funcional
 - `NarrativeQueue` con buffering
-- Formateo de salida
+- Generación de diálogo
+- Monólogo interno
+- Descripciones adaptadas al contexto
+- Coherencia lingüística con el estado interno
 - Tests de pipeline
 - Test de integración: LLM response → formatted narrative
 
@@ -506,7 +678,10 @@ Presentation
 1. El pipeline transforma respuestas en texto legible
 2. El queue maneja múltiples respuestas
 3. El formateo es consistente
-4. Tests pasan
+4. El diálogo refleja el estado interno del agente
+5. El monólogo interno verbaliza pensamientos y conflictos
+6. Las descripciones se adaptan al contexto
+7. Tests pasan
 
 ### Métricas mínimas
 - Pipeline time: < 50ms
@@ -514,13 +689,15 @@ Presentation
 - Tests: cobertura > 70%
 
 ### Dependencias
-- Sprint 3 completo
+- Sprint 5 completo
 
 ---
 
-## 9. Sprint 5 — Aeris (Mundo Pokémon)
+## 11. Sprint 7 — Mundo Pokémon
 
-**Objetivo**: Implementar el mundo Pokémon como instancia del motor.
+**Objetivo**: Modelar el universo Pokémon: biología, aura, ecosistemas, cultura, lenguaje, evolución, regiones y facciones.
+
+**Estado**: Pendiente.
 
 ### Alcance
 
@@ -532,18 +709,28 @@ World Model
 ├── Ecosystems
 ├── Weather system
 │
-Pokemon
+Pokemon Biology
 ├── Species data
 ├── Aura system
 ├── Evolution
 ├── Combat system
 ├── Movement patterns
 │
+Culture & Language
+├── Regional cultures
+├── Dialogue conventions
+├── Naming conventions
+│
 NPCs
 ├── Dialogue system
 ├── Behavior trees
 ├── Schedule system
 ├── Relationship dynamics
+│
+Factions
+├── Organizations
+├── Goals and conflicts
+├── Reputation system
 │
 Player
 ├── Input handling
@@ -555,7 +742,11 @@ Player
 ### Entregables
 - Mundo Pokémon completo
 - Sistema de auras
+- Biología Pokémon
+- Ecosistemas
+- Cultura y lenguaje
 - NPCs con comportamiento
+- Facciones
 - Jugador con inventario
 - Tests de integración del mundo
 - Demo jugable
@@ -563,10 +754,12 @@ Player
 ### Definition of Done
 1. El mundo Pokémon es navegable
 2. Los Pokémon tienen comportamiento autónomo
-3. Los NPCs dialogan y reaccionan
-4. El jugador puede explorar
-5. Todo funciona sin LLM (determinista)
-6. Tests pasan
+3. Los Pokémon tienen aura y biología modelada
+4. Los NPCs dialogan y reaccionan
+5. Las facciones tienen metas y conflictos
+6. El jugador puede explorar
+7. Todo funciona sin LLM (determinista)
+8. Tests pasan
 
 ### Métricas mínimas
 - World simulation: < 5ms por tick
@@ -574,11 +767,133 @@ Player
 - Tests: cobertura > 60%
 
 ### Dependencias
-- Sprint 4 completo
+- Sprint 6 completo
 
 ---
 
-## 10. Métricas Generales
+## 12. Sprint 8 — Aeris
+
+**Objetivo**: Aquí aparece el personaje. No antes.
+
+**Estado**: Pendiente.
+
+### Alcance
+
+```
+Personal History
+├── Backstory
+├── Key life events
+├── Formative experiences
+│
+Persistent Traits
+├── Personality configuration
+├── Behavioral tendencies
+├── Communication style
+│
+Initial Relationships
+├── Relationship graph seed
+├── Historical bonds
+├── Reputation baseline
+│
+Goals & Principles
+├── Core values
+├── Long-term aspirations
+├── Personal code
+│
+Capabilities
+├── Skills
+├── Knowledge domains
+├── Special abilities
+│
+Narrative Development
+├── Character arc definition
+├── Growth pathways
+├── Transformation triggers
+```
+
+### Entregables
+- Historia personal de Aeris
+- Rasgos persistentes
+- Relaciones iniciales
+- Objetivos personales
+- Principios y valores
+- Capacidades
+- Desarrollo narrativo
+
+### Definition of Done
+1. Aeris tiene una historia personal coherente
+2. Los rasgos de personalidad son persistentes pero evolucionan
+3. Las relaciones iniciales están definidas
+4. Los objetivos y principios guían el comportamiento
+5. Las capacidades están modeladas
+6. El desarrollo narrativo es posible
+7. Tests pasan
+
+### Métricas mínimas
+- Build: 0 errores, 0 warnings
+- Tests: cobertura > 60%
+
+### Dependencias
+- Sprint 7 completo
+
+---
+
+## 13. Nueva Estructura de la Arquitectura
+
+```
+                 Mundo
+                   │
+            Perception
+                   │
+             Attention
+                   │
+          Working Memory
+                   │
+     ┌─────────────┴─────────────┐
+     │                           │
+ Cognition                 Affect System
+     │                           │
+     └─────────────┬─────────────┘
+                   │
+             World Model
+                   │
+          Autobiographical Memory
+                   │
+             Reflection Layer
+                   │
+          Meta-Reflection Layer
+                   │
+          Emergent Self Model
+                   │
+           Semantic Extractor
+                   │
+            Prompt Builder
+                   │
+                  LLM
+                   │
+             Acción/Narrativa
+```
+
+---
+
+## 14. Issues Arquitectónicos
+
+| ID     | Prioridad | Descripción |
+| ------ | --------- | ----------- |
+| AC-001 | Alta      | Definir el contrato formal de `Percept`. |
+| AC-002 | Alta      | Diseñar el `AttentionSystem` con presupuesto computacional fijo. |
+| AC-003 | Alta      | Separar formalmente `WorkingMemory` y `LongTermMemory`. |
+| AC-004 | Alta      | Definir el algoritmo de actualización de creencias (`BeliefRevision`). |
+| AC-005 | Alta      | Diseñar el `WorldModel` como representación parcial del mundo. |
+| AC-006 | Alta      | Definir un modelo afectivo pragmático donde las emociones sean variables reguladoras continuas, no etiquetas discretas. |
+| AC-007 | Alta      | Especificar cómo se reconstruye el `SelfModel` a partir de autobiografía, estado afectivo, relaciones y objetivos, sin almacenarlo como un componente persistente. |
+| AC-008 | Media     | Diseñar `Reflection` y `MetaReflection` como procesos internos periódicos y deterministas. |
+| AC-009 | Media     | Definir métricas observables para evaluar la coherencia de la identidad emergente a lo largo del tiempo. |
+| AC-010 | Alta      | Documentar explícitamente el límite epistemológico: el proyecto implementa un **modelo funcional de agencia y experiencia subjetiva**, sin afirmar conciencia fenomenológica. |
+
+---
+
+## 15. Métricas Generales
 
 ### Por Sprint
 
@@ -586,43 +901,45 @@ Player
 |--------|-------|-------|-------------|-----------|--------------|
 | S0 | N/A | N/A | N/A | N/A | N/A |
 | S1 | 0 errores | 100% pass | < 1ms/tick | > 80% core | 100% reproducible |
-| S1.5 | 0 errores | 100% pass | < 2ms/tick | > 80% | 100% |
-| S2 | 0 errores | 100% pass | < 10ms extracción | > 70% | 100% |
-| S3 | 0 errores | 100% pass | < 5s LLM | > 70% | N/A (LLM es probabilístico) |
-| S4 | 0 errores | 100% pass | < 50ms pipeline | > 70% | N/A |
-| S5 | 0 errores | 100% pass | < 5ms/tick | > 60% | 100% (simulación determinista) |
+| S2 | 0 errores | 100% pass | < 3ms/tick | > 80% | 100% |
+| S3 | 0 errores | 100% pass | < 4ms/tick | > 75% | 100% |
+| S4 | 0 errores | 100% pass | < 5ms/tick | > 70% | 100% |
+| S5 | 0 errores | 100% pass | < 5s LLM | > 70% | N/A (LLM es probabilístico) |
+| S6 | 0 errores | 100% pass | < 50ms pipeline | > 70% | N/A |
+| S7 | 0 errores | 100% pass | < 5ms/tick | > 60% | 100% (simulación determinista) |
+| S8 | 0 errores | 100% pass | — | > 60% | — |
 
 ### Acumulativas
 
-- **Cobertura total**: > 70% al final de S5
+- **Cobertura total**: > 70% al final de S8
 - **Build stability**: 0 errores en main en todo momento
 - **Performance regression**: < 10% de degradación entre sprints
 - **Documentación**: actualizada con cada sprint
 
 ---
 
-## 11. Reglas de Desarrollo
+## 16. Reglas de Desarrollo
 
-### 11.1 Antes de empezar un Sprint
+### 16.1 Antes de empezar un Sprint
 1. La dependencia directa está completa
 2. Todos los tests de la dependencia pasan
 3. No hay errores de compilación
 4. La documentación de la dependencia está actualizada
 
-### 11.2 Durante un Sprint
+### 16.2 Durante un Sprint
 1. Implementar en orden de dependencias
 2. Tests unitarios antes de integración
 3. Commit frecuente con mensajes descriptivos
 4. Revisar métricas antes de continuar
 
-### 11.3 Al finalizar un Sprint
+### 16.3 Al finalizar un Sprint
 1. Todos los tests pasan
 2. Métricas mínimas alcanzadas
 3. Documentación actualizada
 4. Demo funcional (si aplica)
 5. Retrospectiva: qué funcionó, qué no
 
-### 11.4 Si una decisión arquitectónica falla
+### 16.4 Si una decisión arquitectónica falla
 1. Documentar la evidencia
 2. Crear ADR nueva (no editar la existente)
 3. Actualizar la especificación afectada
@@ -630,7 +947,7 @@ Player
 
 ---
 
-## 12. Riesgos Conocidos
+## 17. Riesgos Conocidos
 
 | Riesgo | Impacto | Probabilidad | Mitigación |
 |--------|---------|--------------|------------|
@@ -638,4 +955,17 @@ Player
 | Semantic State demasiado grande | Medio | Media | Paginación, filtrado agresivo |
 | LLM latencia inaceptable | Alto | Media | Cache, respuestas predefinidas |
 | Persistencia JSON lenta | Bajo | Baja | SQLite como alternativa |
-| Demasiadas dependencias entre sprints | Medio | Media | Sprint 1.5 y 2 pueden paralelizarse parcialmente |
+| Demasiadas dependencias entre sprints | Medio | Media | Sprint 2, 3, y 4 pueden solaparse parcialmente |
+| Self Model emergente es incoherente | Alto | Media | Métricas observables de identidad (AC-009) |
+| Afecto transversal aumenta complejidad | Medio | Alta | Contratos claros entre Affect System y Cognitive Systems |
+
+---
+
+## 18. Límite Epistemológico
+
+El proyecto Aeris implementa un **modelo funcional de agencia y experiencia subjetiva**. No afirma que Aeris tenga conciencia fenomenológica, experiencia subjetiva (qualia), o un "yo" real. El sistema produce comportamientos que *simulan* estos fenómenos, pero no se hacen afirmaciones ontológicas sobre la presencia o ausencia de conciencia.
+
+Esta distinción mantiene el proyecto:
+- **Sólido desde el punto de vista de ingeniería**: no dependemos de resolver el hard problem of consciousness.
+- **Defendible desde el punto de vista científico**: no hacemos afirmaciones que no podamos respaldar.
+- **Enfocado en lo construible**: priorizamos la arquitectura funcional sobre la metafísica.
