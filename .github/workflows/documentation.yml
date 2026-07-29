@@ -1,0 +1,25 @@
+name: Documentation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "README.md"
+
+jobs:
+  check-links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check internal links
+        run: |
+          echo "Checking for broken internal references..."
+          # Verifica que los archivos referenciados en docs/ existan
+          grep -oP 'docs/\S+' docs/*.md | sed 's/.*docs\///' | sed 's/[):].*//' | sort -u | while read f; do
+            if [ ! -f "docs/$f" ] && [ ! -f "$f" ]; then
+              echo "  MISSING: $f"
+              exit 1
+            fi
+          done
+          echo "✓ All internal references valid"

@@ -1,8 +1,13 @@
 # Aeris
 
-**Motor de narrativa emergente basado en simulación para un mundo Pokémon.**
+**Motor de simulación cognitiva con capa narrativa para un mundo Pokémon.**
 
-Aeris no es un chatbot ni un juego con guion. Es un **simulador de mundo** donde la historia emerge como consecuencia de la simulación, no como producto de un prompt.
+[![CI](https://github.com/Cedrick-Coto/Aeris/actions/workflows/ci.yml/badge.svg)](https://github.com/Cedrick-Coto/Aeris/actions/workflows/ci.yml)
+[![Determinism](https://github.com/Cedrick-Coto/Aeris/actions/workflows/determinism.yml/badge.svg)](https://github.com/Cedrick-Coto/Aeris/actions/workflows/determinism.yml)
+[![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
+[![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com)
+
+Aeris no es un chatbot ni un juego con guion. Es un **simulador de mundo** donde la historia emerge como consecuencia de la simulación, no como producto de un prompt. El LLM no piensa: verbaliza el estado interno del agente.
 
 ---
 
@@ -14,6 +19,17 @@ Aeris no es un chatbot ni un juego con guion. Es un **simulador de mundo** donde
 - El **LLM nunca modifica el estado del mundo**; únicamente interpreta y expresa el estado interno.
 - El **Self** no es un componente explícito: emerge de la integración persistente de memoria, cognición, afecto, relaciones y autobiografía.
 - El proyecto implementa un **modelo funcional de agencia**, no afirma reproducir la conciencia humana.
+
+### Estabilidad de decisiones
+
+| Nivel | Ámbito | Cambios esperados |
+|-------|--------|-------------------|
+| A0 | Principios epistemológicos | Muy excepcionales |
+| A1 | Axiomas cognitivos | Muy raros |
+| A2 | Arquitectura del motor | Poco frecuentes |
+| A3 | Plataforma e implementación | Frecuentes |
+
+Ver [ADR hierarchy](docs/adr/README.md) para la clasificación completa.
 
 ---
 
@@ -41,59 +57,22 @@ Aeris no es un chatbot ni un juego con guion. Es un **simulador de mundo** donde
           Narrativa / Diálogo
 ```
 
+El LLM opera sobre la **frontera determinismo/probabilismo**: recibe un `SemanticState` determinista y produce narrativa probabilística. Nunca modifica el estado interno del agente.
+
+Para una descripción detallada de cada subsistema: [`docs/16-agent-architecture.md`](docs/16-agent-architecture.md).
+
 ---
 
 ## Stack Tecnológico
 
 | Componente | Tecnología |
 |------------|------------|
-| Lenguaje | C# (.NET 8.0) |
+| Lenguaje | C# (.NET 10.0) |
 | Paradigma | ECS (Entity Component System) + Data-Oriented Design |
 | ECS Library | [Arch](https://github.com/genaray/Arch) |
+| Tests | xUnit + FsCheck (property-based) + FluentAssertions |
 | Persistencia | SQLite + JSON |
 | LLM | Provider-agnostic (OpenAI, Claude, Ollama, etc.) |
-
----
-
-## Estructura del Repositorio
-
-```
-Aeris/
-├── Aeris.sln
-├── Directory.Build.props
-├── .editorconfig
-├── .gitignore
-├── LICENSE                          # GPL-3.0
-├── README.md
-├── src/
-│   └── Aeris.Engine/
-│       ├── Aeris.Engine.csproj
-│       ├── Engine.cs                # SimulationEngine (tick lifecycle)
-│       ├── EngineStats.cs           # Telemetría por tick
-│       └── World.cs                 # ECS World wrapper
-├── tests/
-│   └── Aeris.Engine.Tests/
-├── benchmarks/
-│   └── Aeris.Benchmarks/
-└── docs/
-    ├── 00-overview.md
-    ├── 01-ecs-model.md
-    ├── 02-execution-contract.md
-    ├── 03-data-models.md
-    ├── 04-simulation-systems.md
-    ├── 05-semantic-state.md
-    ├── 06-llm-contract.md
-    ├── 07-persistence.md
-    ├── 08-narrative-pipeline.md
-    ├── 10-world-model.md
-    ├── 11-engine-invariants.md
-    ├── 12-extension-points.md
-    ├── 13-validation-rules.md
-    ├── 14-development-roadmap.md
-    ├── 99-glossary.md
-    ├── adr/
-    └── architecture/
-```
 
 ---
 
@@ -103,7 +82,7 @@ Aeris/
 Sprint 0 ──► Sprint 1 ──► Sprint 2 ──► Sprint 3 ──► Sprint 4 ──► Sprint 5 ──► Sprint 6 ──► Sprint 7
 Arquitec.    Motor ECS    Sem. Extr.   Cog.+Af.      LLM          Narrativa    Mundo Pok.   Aeris
 (FROZEN)     (COMPL.)     (Pend.)      +Self         (Verbaliz.)  (Pipeline)   (Modelado)   (Personaje)
-                                        (3.1–3.7)
+                                         (3.1–3.7)
 ```
 
 | Sprint   | Estado     | Objetivo                                                                                       |
@@ -116,6 +95,17 @@ Arquitec.    Motor ECS    Sem. Extr.   Cog.+Af.      LLM          Narrativa    M
 | Sprint 5 | ⏳ Planned  | Narrativa (Diálogo, Monólogo interno, Narración contextual)                                    |
 | Sprint 6 | ⏳ Planned  | Mundo Pokémon (Biología, Aura, Ecosistemas, Cultura, Lenguaje, Facciones)                      |
 | Sprint 7 | ⏳ Planned  | Aeris (Personaje completo e integración final)                                                 |
+
+---
+
+## Cómo contribuir
+
+1. Lee [`CONTRIBUTING.md`](CONTRIBUTING.md)
+2. Revisa los [`docs/adr/`](docs/adr/) para entender las decisiones arquitectónicas
+3. Explora [`docs/hypotheses/`](docs/hypotheses/) para ver hipótesis de investigación activas
+4. Abre un issue o envía un PR
+
+Toda contribución debe respetar los 6 principios arquitectónicos (determinismo, presión de causalidad, trazabilidad, contrato computacional, localidad causal, modulación afectiva).
 
 ---
 
@@ -132,14 +122,10 @@ dotnet test
 dotnet run --project benchmarks/Aeris.Benchmarks -c Release
 ```
 
----
-
-## Requisitos
-
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+**Requiere**: [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 
 ---
 
 ## Licencia
 
-[GPL-3.0](LICENSE)
+[GPL-3.0](LICENSE). Ver [`SECURITY.md`](SECURITY.md) para reportar vulnerabilidades.

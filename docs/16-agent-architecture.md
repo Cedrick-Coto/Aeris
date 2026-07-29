@@ -424,3 +424,77 @@ Actualizar el contenido del agente (no el código) basado en la experiencia.
 - Discriminación: patrones distintos se separan
 
 ---
+
+## 17. Principios de Arquitectura del Agente
+
+Estos principios aplican a todos los subsistemas cognitivos definidos en este documento y son verificables en revisiones de código y pruebas.
+
+### 17.1 Determinismo
+
+El mismo estado inicial, mismos eventos y misma semilla del RNG producen exactamente el mismo estado final. No hay aleatoriedad no controlada en ningún subsistema cognitivo.
+
+### 17.2 Presión de Causalidad (bidireccional)
+
+- **Hacia atrás**: toda conducta observable debe poder trazarse hasta un estado interno simulado.
+- **Hacia adelante**: todo estado interno relevante debe poder influir potencialmente en alguna conducta.
+
+No existen respuestas "programadas" directamente. Ningún subsistema contiene lógica del tipo `if (emotion == X) { Say("...") }`. El estado afectivo modula pesos, umbrales y ruido en el procesamiento; no selecciona respuestas directamente.
+
+### 17.3 Trazabilidad
+
+Toda transición de estado en cualquier subsistema puede explicarse. Cada subsistema expone una **cadena de explicación causal** con estructura uniforme:
+
+```
+System
+├── Inputs: qué leyó
+├── Computation: qué procesó
+├── Outputs: qué produjo
+├── SideEffects: qué más modificó
+└── Why: qué regla o criterio motivó la transición
+```
+
+La explicación distingue entre **evidencia** (hechos mensurables del estado) e **inferencia** (resultados del proceso de decisión del subsistema).
+
+Ejemplo para una decisión de Planning:
+
+```
+Action: Retreat
+Evidence
+├── Threat = 0.82
+├── SafetyGoal = Active
+└── Distance = 1.2 m
+
+Inference
+├── Planner selected: RetreatPlan
+└── Utility = 0.74
+```
+
+### 17.4 Contrato Computacional
+
+Un concepto solo entra al motor si puede expresarse como un contrato computacional con:
+
+- **Entradas** formalizadas (lee estos datos)
+- **Procesamiento** definido (transforma estos datos así)
+- **Salidas** formalizadas (produce estos datos)
+- **Invariantes** verificables (garantiza estas propiedades)
+
+No se incorporan conceptos por plausibilidad teórica o relevancia literaria. Se incorporan cuando existe una especificación computacional verificable.
+
+### 17.5 Localidad Causal
+
+Cada subsistema modifica únicamente el estado que declara explícitamente como salida.
+
+```
+PerceptionSystem
+├── Lee:    World, Sensors
+├── Escribe: Percepts
+└── No escribe: Goals, Memory, Identity, Relationships
+```
+
+Si un subsistema necesita afectar un estado fuera de su declaración, debe hacerlo mediante un evento o estado intermedio explícito, no como efecto secundario.
+
+### 17.6 Modulación Afectiva
+
+El estado afectivo modifica el procesamiento cognitivo (pesos, umbrales, ruido), pero nunca selecciona respuestas directamente. No existe código del tipo `if (affect == X) → branch Y`. Las emociones observables son interpretaciones que el LLM puede generar, no datos internos del motor.
+
+---
