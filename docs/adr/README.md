@@ -63,4 +63,5 @@ Decisiones tecnológicas reemplazables según el contexto:
 
 - Los ADR no se editan después de aceptados. Si una decisión cambia, se crea un ADR nuevo.
 - Las hipótesis de investigación se registran en `docs/hypotheses/`, no como ADR.
+- Las notas de literatura se registran en `docs/research-notes/`, no como ADR.
 - Los ADR de nivel A1 requieren consenso explícito antes de modificarse.

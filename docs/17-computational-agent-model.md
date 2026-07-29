@@ -14,7 +14,7 @@ Sirve como puente entre los principios arquitectónicos (ADR-0006, ADR-0008, ADR
 
 ### Niveles epistemológicos
 
-Cada subsistema en este documento se clasifica según el tipo de evidencia que lo respalda, no según su importancia funcional:
+Cada subsistema en este documento se clasifica según el tipo de evidencia que lo respalda, no según su importancia funcional. Las referencias breves en «Evidence Sources» se expanden en Research Notes (`docs/research-notes/`), donde cada tema tiene su propio resumen de literatura, fuentes y análisis de impacto.
 
 | Nivel | Etiqueta | Significado |
 |-------|----------|-------------|
@@ -789,7 +789,15 @@ Regla: el LLM nunca ve:
 
 ---
 
-## 7. Principios verificables
+## 7. Documentación referenciada
+
+| Tipo | ID | Tema |
+|------|----|------|
+| Research Note | RN-0001 | Working Memory (Baddeley) |
+
+---
+
+## 8. Principios verificables
 
 | Principio (doc-16 §17) | Cómo se verifica en este modelo |
 |------------------------|---------------------------------|

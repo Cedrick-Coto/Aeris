@@ -1,6 +1,6 @@
 # Aeris — Visión General del Proyecto
 
-**Versión**: 0.2  
+**Versión**: 0.3  
 **Estado**: Sprint 0 — FROZEN  
 **Última actualización**: 2026-07-29
 
@@ -189,7 +189,9 @@ docs/
 ├── 16-agent-architecture.md    ← Arquitectura del agente
 ├── 17-computational-agent-model.md ← Modelo computacional formal
 ├── 99-glossary.md              ← Glosario de términos
-└── adr/                        ← Architecture Decision Records
+├── adr/                        ← Architecture Decision Records
+├── hypotheses/                 ← Hipótesis de investigación
+└── research-notes/             ← Notas de literatura científica
     ├── 0001-use-arch-ecs.md
     ├── 0002-use-sqlite-json.md
     ├── 0003-use-csharp.md
@@ -202,7 +204,21 @@ docs/
     └── 0010-perception-precedes-cognition.md
 ```
 
-## 9. Criterio de Completitud del Sprint 0
+## 9. Capas de Documentación
+
+El proyecto documenta en tres dimensiones:
+
+| Capa | Formato | Pregunta | Contenido |
+|------|---------|----------|-----------|
+| Arquitectónica | ADR (`docs/adr/`) | ¿Cómo funciona? | Decisiones vigentes, alternativas, consecuencias |
+| Científica | Research Notes (`docs/research-notes/`) | ¿Por qué creemos que es razonable? | Literatura, evidencia, impacto potencial |
+| Experimental | Hypotheses (`docs/hypotheses/`) | ¿Qué sigue siendo incierto? | Hipótesis, experimentos, resultados |
+
+Cada capa tiene un ciclo de vida distinto y no deben mezclarse. Una Research Note no implica una decisión arquitectónica; una Hypothesis no implica una ADR. La separación permite que el proyecto evolucione sin confundir especulación con decisión.
+
+---
+
+## 10. Criterio de Completitud del Sprint 0
 
 El Sprint 0 está completo cuando:
 
