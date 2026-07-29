@@ -17,7 +17,9 @@ Aeris no es un chatbot ni un juego con guion. Es un **simulador de mundo** donde
 - **Determinismo** como requisito del núcleo de simulación.
 - **Separación estricta** entre simulación, cognición, afecto y narrativa.
 - El **LLM nunca modifica el estado del mundo**; únicamente interpreta y expresa el estado interno.
-- El **Self** no es un componente explícito: emerge de la integración persistente de memoria, cognición, afecto, relaciones y autobiografía.
+- El **Self** no es un componente: se reconstruye cada tick como `SelfSnapshot`.
+- El **afecto** es un vector continuo (curiosidad, estrés, confianza, etc.), no emociones discretas.
+- ACMA es un **módulo cognitivo experimental e intercambiable** (v1, v2, ...).
 - El proyecto implementa un **modelo funcional de agencia**, no afirma reproducir la conciencia humana.
 
 ### Estabilidad de decisiones
@@ -36,28 +38,34 @@ Ver [ADR hierarchy](docs/adr/README.md) para la clasificación completa.
 ## Arquitectura
 
 ```
-                  Mundo
-                    │
-              Simulación ECS
-                    │
-      ┌─────────────┴─────────────┐
-      │                           │
- Cognición                  Afecto
-      │                           │
-      └─────────────┬─────────────┘
-                    │
-         Modelo Emergente del Self
-                    │
-          Semantic Extractor
-                    │
-            Prompt Builder
-                    │
-                  LLM
-                    │
-          Narrativa / Diálogo
+                    Mundo ECS
+                       │
+                 Simulation Tick
+                       │
+                Semantic Extractor
+                       │
+                ┌──────┴──────┐
+                │   ACMA vN   │
+                │  (módulo    │
+                │  cognitivo  │
+                │  intercam-  │
+                │  biable)    │
+                └──────┬──────┘
+                       │
+               SelfSnapshot
+            (existe solo este tick)
+                       │
+                ┌──────┴──────┐
+                │  Narrative  │
+                │  Pipeline   │
+                └──────┬──────┘
+                       │
+                     LLM
+                       │
+             Narrativa / Diálogo
 ```
 
-El LLM opera sobre la **frontera determinismo/probabilismo**: recibe un `SemanticState` determinista y produce narrativa probabilística. Nunca modifica el estado interno del agente.
+El LLM opera sobre la **frontera determinismo/probabilismo**: recibe `SelfSnapshot` + `SemanticState` deterministas y produce narrativa probabilística. Nunca modifica el estado interno del agente.
 
 Para una descripción detallada de cada subsistema: [`docs/16-agent-architecture.md`](docs/16-agent-architecture.md).
 
@@ -79,10 +87,11 @@ Para una descripción detallada de cada subsistema: [`docs/16-agent-architecture
 ## Roadmap de Desarrollo
 
 ```
-Sprint 0 ──► Sprint 1 ──► Sprint 2 ──► Sprint 3 ──► Sprint 4 ──► Sprint 5 ──► Sprint 6 ──► Sprint 7
-Arquitec.    Motor ECS    Sem. Extr.   Cog.+Af.      LLM          Narrativa    Mundo Pok.   Aeris
-(FROZEN)     (COMPL.)     (Pend.)      +Self         (Verbaliz.)  (Pipeline)   (Modelado)   (Personaje)
-                                         (3.1–3.7)
+Sprint 0 ──► Sprint 1 ──► Sprint 2 ──► Sprint 3A ──► Sprint 3B ──► Sprint 4 ──► Sprint 5 ──► Sprint 6 ──► Sprint 7
+Arquitec.    Motor ECS    Sem. Extr.   Infra.       ACMA v1      LLM          Narrativa    Mundo Pok.   Aeris
+(FROZEN)     (COMPL.)     (Pend.)      Cognitiva    (Modelo      (Verbaliz.)  (Pipeline)   (Modelado)   (Personaje)
+                                        (Sistemas    Experimental)
+                                        Generales)
 ```
 
 | Sprint   | Estado     | Objetivo                                                                                       |
@@ -90,7 +99,8 @@ Arquitec.    Motor ECS    Sem. Extr.   Cog.+Af.      LLM          Narrativa    M
 | Sprint 0 | ✅ Frozen   | Especificación arquitectónica y ADRs                                                           |
 | Sprint 1 | ✅ Complete | Motor ECS determinista (World, Systems, EventBus, Scheduler, Persistence)                      |
 | Sprint 2 | ⏳ Planned  | Semantic Extractor (extraer estado del mundo → SemanticState para el LLM)                      |
-| Sprint 3 | ⏳ Planned  | Arquitectura Cognitiva (Percepción, Afecto, Cognición, Self, Metauditor, Aprendizaje)          |
+| Sprint 3A| ⏳ Planned  | Infraestructura cognitiva (11 sistemas ECS deterministas)                                      |
+| Sprint 3B| ⏳ Planned  | ACMA v1 — primera hipótesis experimental del agente                                            |
 | Sprint 4 | ⏳ Planned  | Integración LLM (verbalizador, no pensador)                                                    |
 | Sprint 5 | ⏳ Planned  | Narrativa (Diálogo, Monólogo interno, Narración contextual)                                    |
 | Sprint 6 | ⏳ Planned  | Mundo Pokémon (Biología, Aura, Ecosistemas, Cultura, Lenguaje, Facciones)                      |

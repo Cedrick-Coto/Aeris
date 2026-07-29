@@ -1,8 +1,8 @@
 # 14. Development Roadmap
 
-**Versión**: 0.3  
+**Versión**: 0.4  
 **Estado**: Activo  
-**Última actualización**: 2026-07-28
+**Última actualización**: 2026-07-29
 
 ---
 
@@ -23,10 +23,11 @@ El objetivo no es "hacer que Aeris piense como un humano", sino **construir una 
 ## 3. Progresión de Sprints
 
 ```
-Sprint 0 ──► Sprint 1 ──► Sprint 2 ──► Sprint 3 ──► Sprint 4 ──► Sprint 5 ──► Sprint 6 ──► Sprint 7
-Arquitec.    Motor ECS    Sem. Extr.   Cog. + Af.   LLM          Narrativa    Mundo Pok.   Aeris
-(FROZEN)     (COMPL.)     (Pend.)      + Self       (Verbaliz.)  (Pipeline)   (Modelado)   (Personaje)
-                                       (Micro-sprints 3.1–3.7)
+Sprint 0 ──► Sprint 1 ──► Sprint 2 ──► Sprint 3A ──► Sprint 3B ──► Sprint 4 ──► Sprint 5 ──► Sprint 6 ──► Sprint 7
+Arquitec.    Motor ECS    Sem. Extr.   Infra.       ACMA v1      LLM          Narrativa    Mundo Pok.   Aeris
+(FROZEN)     (COMPL.)     (Pend.)      Cognitiva    (Modelo      (Verbaliz.)  (Pipeline)   (Modelado)   (Personaje)
+                                        (Sistemas    Experimental)
+                                        generales)
 ```
 
 ### Dependencias entre Sprints
@@ -35,11 +36,12 @@ Arquitec.    Motor ECS    Sem. Extr.   Cog. + Af.   LLM          Narrativa    Mu
 Sprint 0 (S0)
   └──► Sprint 1 (S1)
          └──► Sprint 2 (S2)
-                └──► Sprint 3 (S3)
-                       └──► Sprint 4 (S4)
-                              └──► Sprint 5 (S5)
-                                     └──► Sprint 6 (S6)
-                                            └──► Sprint 7 (S7)
+                └──► Sprint 3A (S3A)
+                       └──► Sprint 3B (S3B)
+                              └──► Sprint 4 (S4)
+                                     └──► Sprint 5 (S5)
+                                            └──► Sprint 6 (S6)
+                                                   └──► Sprint 7 (S7)
 ```
 
 **Regla**: Un Sprint no puede iniciar hasta que su dependencia directa esté completa y validada.
@@ -364,170 +366,110 @@ PromptBuilder
 
 ---
 
-## 7. Sprint 3 — Arquitectura Cognitiva
+## 7. Sprint 3A — Infraestructura Cognitiva
 
-**Objetivo**: Implementar la arquitectura cognitiva completa del agente: percepción, modelo afectivo funcional, cognición, self model, metaauditoría, aprendizaje e identidad emergente. No hay separación artificial entre "cognición", "afecto" y "self": todos son subsistemas de una misma arquitectura.
+**Objetivo**: Construir los mecanismos generales sobre los que cualquier teoría cognitiva pueda implementarse. No existe todavía "Aeris". Existe únicamente la maquinaria.
 
 **Estado**: Pendiente.
 
-### Micro-sprints
+### Naturaleza del Sprint
 
-El Sprint 3 se organiza en 7 micro-sprints que se construyen incrementalmente:
+El Sprint 3 se divide en dos capas para proteger la transición de riesgo **arquitectónico** (Sprints 0–2) a riesgo **científico** (Sprint 3B en adelante). La infraestructura cognitiva (3A) es puramente ingenieril: sistemas ECS deterministas con interfaces formales. El modelo experimental (3B) es científico: una hipótesis implementada.
 
-```
-3.1 Percepción
-    ↓
-3.2 Modelo Afectivo
-    ↓
-3.3 Cognición
-    ↓
-3.4 Self Model
-    ↓
-3.5 Metauditor
-    ↓
-3.6 Aprendizaje
-    ↓
-3.7 Identidad Emergente
-```
+### Precondición
 
----
+Antes de iniciar 3A, debe existir el documento de especificación formal del modelo computacional del agente (`docs/17-computational-agent-model.md`), que define:
+- Variables de estado de cada subsistema
+- Entradas y salidas de cada sistema
+- Invariantes
+- Cadena causal completa desde percepción hasta acción
+- Qué información puede leer y modificar cada sistema
 
-### 3.1 — Percepción
+### Sistemas
 
-Entrada al sistema.
+Todos implementados como **sistemas ECS deterministas** sin contenido de "personalidad" ni teoría cognitiva específica.
 
 ```
-World
-↓
 PerceptionSystem
-↓
-Percepts
+├── Traduce eventos del mundo a Percept[] estructurados
+├── Sin interpretación semántica (solo filtrado sensorial)
+├── Incertidumbre como confidence float [0, 1]
+└── Salida: Percept[]
+
+AttentionSystem
+├── Presupuesto computacional fijo por tick
+├── Filtra Percept[] por saliencia
+├── Modulado por AffectState (arousal, novelty, threat)
+└── Salida: Percept[] (atendidos)
+
+WorkingMemorySystem
+├── Capacidad limitada (N chunks, configurable)
+├── Decaimiento y refresco por re-atención
+└── Salida: WorkingMemoryContent
+
+LongTermMemorySystem
+├── Episódica, semántica, procedimental
+├── Consolidación, olvido, reinterpretación
+└── Salida: Recuerdos recuperados vía query
+
+AffectSystem
+├── Vector continuo (no etiquetas discretas)
+├── Dimensiones: Curiosity, Stress, Confidence, Trust,
+│   Novelty, Attachment, Threat, RewardExpectation,
+│   CognitiveLoad
+├── Homeostasis: cada variable tiende a valor basal
+└── Salida: AffectState (modula otros subsistemas)
+
+GoalSystem
+├── Activar, suspender, priorizar objetivos
+├── Goals con tipo, prioridad, progreso, subgoals
+└── Salida: ActiveGoal[]
+
+ReasoningSystem
+├── Inferencia causal, deductiva, abductiva, analógica
+├── Modulado por AffectState
+├── Sin simulación mental (será en 3B)
+└── Salida: Inference[], BeliefChange[]
+
+PlanningSystem
+├── Generar, evaluar, seleccionar planes
+├── Evaluación sobre WorldModel interno
+└── Salida: Plan
+
+DecisionSystem
+├── Seleccionar próxima acción desde el plan
+├── Emitir Action como evento del EventBus
+└── Salida: Action
+
+AuditorSystem
+├── Observa razonamiento, detecta conflictos
+├── Sin modificar estado (solo reporta)
+└── Salida: ConflictReport[], Correction[]
+
+IdentityReconstructionSystem
+├── Construye SelfSnapshot desde cero cada tick
+├── Entradas: memoria autobiográfica, goals, afecto, relaciones
+├── SelfSnapshot existe solo durante el tick
+└── No hay un componente «Self» en el ECS
 ```
 
-**Issues**:
-- Percepción visual
-- Percepción auditiva
-- Percepción de aura
-- Incertidumbre perceptiva
-- Atención inicial
+### Entregables
+- Los 11 sistemas implementados como Systems ECS
+- `SelfSnapshot` como struct inmutable (no componente persistente)
+- `AffectState` como vector continuo con homeostasis
+- Interfaces formales para cada sistema (según doc-17)
+- Tests unitarios para cada sistema
+- Test de cadena causal: todos los sistemas se ejecutan en orden
+- Test de determinismo: misma seed → mismo SelfSnapshot
 
----
-
-### 3.2 — Modelo Afectivo
-
-Sistema afectivo funcional. No se habla de "emociones humanas" sino de un sistema de regulación afectiva.
-
-**Componentes**:
-
-```
-AffectState
-├── Valence
-├── Arousal
-├── Control
-├── Novelty
-├── Safety
-├── Attachment
-├── Stress
-├── Curiosity
-```
-
-Los sentimientos emergen después. No existen como variable explícita.
-
----
-
-### 3.3 — Cognición
-
-Aquí vive el pensamiento.
-
-```
-Working Memory
-↓
-Reasoning
-↓
-Planning
-↓
-Decision
-```
-
-Incluye:
-- Memoria de trabajo
-- Inferencia
-- Objetivos
-- Simulación interna
-- Planificación
-
----
-
-### 3.4 — Self Model
-
-No almacena "el yo". Lo reconstruye continuamente.
-
-```
-Autobiografía
-+
-Memorias
-+
-Relaciones
-+
-Objetivos
-+
-Estado afectivo
-↓
-SelfModel
-```
-
-Nunca existe una variable `Soy Aeris`. Eso sería artificial. Existe únicamente una representación integrada del estado.
-
----
-
-### 3.5 — Metauditor
-
-No piensa. Observa el pensamiento.
-
-```
-Reasoning
-↓
-Audit
-↓
-Conflicts
-↓
-Corrections
-```
-
----
-
-### 3.6 — Aprendizaje
-
-Aprende:
-- Creencias
-- Relaciones
-- Preferencias
-- Principios derivados
-
-No aprende el código. Aprende el contenido.
-
----
-
-### 3.7 — Identidad Emergente
-
-Propiedades que aparecen como consecuencia del resto del sistema:
-- Continuidad
-- Estabilidad
-- Cambios de personalidad
-- Coherencia narrativa
-
-No es un módulo. Es un comportamiento.
-
-### Definition of Done (Sprint 3 completo)
-1. 3.1: El sistema de percepción traduce eventos del mundo a perceptos con incertidumbre asociada
-2. 3.2: AffectState es un sistema continuo (valencia, arousal, control, novelty, safety, attachment, stress, curiosity) que modifica cognición
-3. 3.3: Working Memory, Reasoning, Planning y Decision forman un pipeline funcional
-4. 3.4: Self Model se reconstruye cada vez que se consulta a partir de autobiografía, memoria, relaciones, objetivos y afecto
-5. 3.5: Metauditor detecta conflictos en el razonamiento y sugiere correcciones
-6. 3.6: El aprendizaje actualiza creencias, relaciones, preferencias y principios
-7. 3.7: La identidad emerge como propiedad del sistema (continuidad, estabilidad, coherencia)
-8. Todo funciona sin LLM (determinista)
-9. Tests pasan
+### Definition of Done (3A)
+1. Todos los sistemas implementados con interfaces formales
+2. La cadena causal se ejecuta en orden cada tick
+3. SelfSnapshot se reconstruye desde cero cada tick
+4. AffectState modula otros sistemas (pesos, umbrales)
+5. Ningún sistema escribe fuera de su declaración de salida
+6. Todo funciona sin LLM (determinista)
+7. Tests pasan (unitarios + cadena causal + determinismo)
 
 ### Métricas mínimas
 - Build: 0 errores, 0 warnings
@@ -536,10 +478,90 @@ No es un módulo. Es un comportamiento.
 
 ### Dependencias
 - Sprint 2 completo
+- docs/17-computational-agent-model.md especificado y revisado
 
 ---
 
-## 8. Sprint 4 — Integración LLM
+## 8. Sprint 3B — ACMA v1 (Modelo Experimental)
+
+**Objetivo**: Implementar la primera hipótesis experimental del agente. ACMA (Agente Cognitivo con Memoria y Afecto) no es "la mente". Es un modelo concreto y reemplazable.
+
+**Estado**: Pendiente.
+
+### Naturaleza del Sprint
+
+Este sprint marca la transición a riesgo **científico**. ACMA v1 es una hipótesis implementada. Puede haber ACMA v2, v3, etc. La infraestructura (3A) permite intercambiar modelos sin cambiar el motor.
+
+### Qué aporta ACMA v1 sobre la infraestructura 3A
+
+```
+Sprint 3A                          Sprint 3B
+─────────────────────────          ─────────────────────────
+PerceptionSystem         ▶         Misma implementación
+AttentionSystem          ▶         + Umbrales afectivos iniciales
+WorkingMemorySystem      ▶         + Chunk types específicos
+LongTermMemorySystem     ▶         + Consolidación con afecto
+AffectSystem             ▶         + Baselines de personalidad
+GoalSystem               ▶         + Goals iniciales de Aeris
+ReasoningSystem          ▶         + Sesgos por personalidad
+PlanningSystem           ▶         + WorldModel básico
+DecisionSystem           ▶         + Árbol de decisión inicial
+AuditorSystem            ▶         + Reglas de coherencia
+IdentityReconstruction   ▶         + SelfSnapshot con narrativa
+                                       autobiográfica
+WorldModelSystem         ▶         Nuevo en 3B (mapa interno,
+                                    relaciones causales,
+                                    teoría de otros)
+```
+
+### Estructura
+
+ACMA vive en su propio namespace y es intercambiable por configuración:
+
+```
+Aeris.Agent/               ← namespace
+├── ACMAVersion.cs         ← "v1"
+├── Perception/
+├── Attention/
+├── Affect/
+├── Memory/
+├── WorldModel/
+├── Reasoning/
+├── Goals/
+├── Planning/
+├── Decision/
+├── Audit/
+└── Identity/
+```
+
+### Entregables
+- Módulo `Aeris.Agent` con ACMA v1
+- WorldModelSystem (interno, no ECS)
+- SelfSnapshot con capacidad de resumen autobiográfico
+- Tests de integración: percepción → self → narrativa
+- Tests de coherencia del self a lo largo del tiempo
+- Documentación de la hipótesis ACMA v1
+
+### Definition of Done (3B)
+1. ACMA v1 produce SelfSnapshot consistente
+2. El SelfSnapshot puede alimentar al Semantic Extractor
+3. El sistema funciona sin LLM (determinista)
+4. Tests de coherencia de identidad pasan
+5. ACMA v1 puede reemplazarse por ACMA v2 sin cambiar el motor
+6. Tests pasan
+
+### Métricas mínimas
+- Build: 0 errores, 0 warnings
+- Tests: cobertura > 75%
+- Performance: tick completo < 10ms con 100 entities
+- SelfSnapshot generation: < 1ms
+
+### Dependencias
+- Sprint 2 completo
+
+---
+
+## 9. Sprint 4 — Integración LLM
 
 **Objetivo**: Integrar el LLM como verbalizador, no como pensador. El LLM nunca modifica beliefs, emotion, memory, goals o world. Solo propone y narra.
 
@@ -629,11 +651,11 @@ Validation
 - Tests: cobertura > 70%
 
 ### Dependencias
-- Sprint 3 completo
+- Sprint 3B completo
 
 ---
 
-## 9. Sprint 5 — Narrativa
+## 10. Sprint 5 — Narrativa
 
 **Objetivo**: El agente ya existe. Ahora aprende a hablar.
 
@@ -701,7 +723,7 @@ Presentation
 
 ---
 
-## 10. Sprint 6 — Mundo Pokémon
+## 11. Sprint 6 — Mundo Pokémon
 
 **Objetivo**: Modelar el universo Pokémon: biología, aura, ecosistemas, cultura, lenguaje, evolución, regiones y facciones.
 
@@ -779,7 +801,7 @@ Player
 
 ---
 
-## 11. Sprint 7 — Aeris
+## 12. Sprint 7 — Aeris
 
 **Objetivo**: Aquí aparece el personaje. No antes.
 
@@ -846,45 +868,64 @@ Narrative Development
 
 ---
 
-## 12. Nueva Estructura de la Arquitectura
+## 13. Nueva Estructura de la Arquitectura
 
 ```
-                 Mundo
-                   │
-            Perception
-                   │
-         AffectState
-                   │
-          Working Memory
-                   │
-      ┌────────────┴────────────┐
-      │                         │
-  Reasoning                Metauditor
-      │                         │
-  Planning                    Audit
-      │                         │
-  Decision                Corrections
-      │                         │
-      └────────────┬────────────┘
-                   │
-          Self Model (reconstruido)
-                   │
-        Autobiographical Memory
-                   │
-       Identity (emergente)
-                   │
-           Semantic Extractor
-                   │
-            Prompt Builder
-                   │
-                  LLM
-                   │
-             Acción/Narrativa
+                         Mundo ECS
+                            │
+                      Simulation Tick
+                            │
+                     Semantic Extractor
+                            │
+                     ┌──────┴──────┐
+                     │  ┌─ ACMA ──┐│
+                     │  │(módulo  ││
+                     │  │cognitivo││
+                     │  │intercam-││
+                     │  │biable)  ││
+                     │  └─────────┘│
+                     └──────┬──────┘
+                            │
+                    SelfSnapshot
+                            │
+                     ┌──────┴──────┐
+                     │  Narrative │
+                     │  Pipeline  │
+                     └──────┬──────┘
+                            │
+                          LLM
+                            │
+                   Acción / Narrativa
+
+
+ACMA internamente (Sprint 3B):
+                            │
+                      Perception
+                            │
+                      Attention
+                            │
+                   Working Memory
+                            │
+             ┌──────────────┼──────────────┐
+             │              │              │
+        Reasoning     AffectState      Auditor
+             │                             │
+         Planning                      Corrections
+             │
+         Decision
+             │
+             └──────────┬──┘
+                        │
+              Long-Term Memory
+                        │
+              Identity Reconstruction
+                        │
+                   SelfSnapshot
 ```
 
 ---
 
-## 13. Issues Arquitectónicos
+## 14. Issues Arquitectónicos
 
 | ID     | Prioridad | Descripción |
 | ------ | --------- | ----------- |
@@ -901,7 +942,7 @@ Narrative Development
 
 ---
 
-## 14. Métricas Generales
+## 15. Métricas Generales
 
 ### Por Sprint
 
@@ -910,7 +951,8 @@ Narrative Development
 | S0 | N/A | N/A | N/A | N/A | N/A |
 | S1 | 0 errores | 100% pass | < 1ms/tick | > 80% core | 100% reproducible |
 | S2 | 0 errores | 100% pass | < 10ms extracción | > 70% | 100% |
-| S3 | 0 errores | 100% pass | < 5ms/tick | > 75% | 100% |
+| S3A | 0 errores | 100% pass | < 5ms/tick | > 75% | 100% |
+| S3B | 0 errores | 100% pass | < 10ms/tick | > 75% | 100% |
 | S4 | 0 errores | 100% pass | < 5s LLM | > 70% | N/A (LLM es probabilístico) |
 | S5 | 0 errores | 100% pass | < 50ms pipeline | > 70% | N/A |
 | S6 | 0 errores | 100% pass | < 5ms/tick | > 60% | 100% (simulación determinista) |
@@ -925,28 +967,28 @@ Narrative Development
 
 ---
 
-## 15. Reglas de Desarrollo
+## 16. Reglas de Desarrollo
 
-### 15.1 Antes de empezar un Sprint
+### 16.1 Antes de empezar un Sprint
 1. La dependencia directa está completa
 2. Todos los tests de la dependencia pasan
 3. No hay errores de compilación
 4. La documentación de la dependencia está actualizada
 
-### 15.2 Durante un Sprint
+### 16.2 Durante un Sprint
 1. Implementar en orden de dependencias
 2. Tests unitarios antes de integración
 3. Commit frecuente con mensajes descriptivos
 4. Revisar métricas antes de continuar
 
-### 15.3 Al finalizar un Sprint
+### 16.3 Al finalizar un Sprint
 1. Todos los tests pasan
 2. Métricas mínimas alcanzadas
 3. Documentación actualizada
 4. Demo funcional (si aplica)
 5. Retrospectiva: qué funcionó, qué no
 
-### 15.4 Si una decisión arquitectónica falla
+### 16.4 Si una decisión arquitectónica falla
 1. Documentar la evidencia
 2. Crear ADR nueva (no editar la existente)
 3. Actualizar la especificación afectada
@@ -954,7 +996,7 @@ Narrative Development
 
 ---
 
-## 16. Riesgos Conocidos
+## 17. Riesgos Conocidos
 
 | Riesgo | Impacto | Probabilidad | Mitigación |
 |--------|---------|--------------|------------|
@@ -962,13 +1004,13 @@ Narrative Development
 | Semantic State demasiado grande | Medio | Media | Paginación, filtrado agresivo |
 | LLM latencia inaceptable | Alto | Media | Cache, respuestas predefinidas |
 | Persistencia JSON lenta | Bajo | Baja | SQLite como alternativa |
-| Micro-sprints 3.1–3.7 demasiado ambiciosos | Alto | Media | Priorizar 3.1–3.4 como núcleo; 3.5–3.7 como extensión |
+| Sprint 3 (3A + 3B) demasiado ambicioso | Alto | Media | Separar infraestructura (3A) de modelo experimental (3B); priorizar sistemas base |
 | Self Model emergente es incoherente | Alto | Media | Métricas observables de identidad (AC-009) |
 | Afecto transversal aumenta complejidad | Medio | Alta | Contratos claros entre AffectState y subsistemas cognitivos |
 
 ---
 
-## 17. Límite Epistemológico
+## 18. Límite Epistemológico
 
 El proyecto Aeris implementa un **modelo funcional de agencia y experiencia subjetiva**. No afirma que Aeris tenga conciencia fenomenológica, experiencia subjetiva (qualia), o un "yo" real. El sistema produce comportamientos que *simulan* estos fenómenos, pero no se hacen afirmaciones ontológicas sobre la presencia o ausencia de conciencia.
 

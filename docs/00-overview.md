@@ -1,8 +1,8 @@
 # Aeris — Visión General del Proyecto
 
-**Versión**: 0.1  
+**Versión**: 0.2  
 **Estado**: Sprint 0 — FROZEN  
-**Última actualización**: 2026-07-26
+**Última actualización**: 2026-07-29
 
 ---
 
@@ -147,9 +147,13 @@ Ver: `07-persistence.md`
 | Persistencia: SQLite + JSON | Decidida | ADR-0002 |
 | LLM como función pura | Decidida | ADR-0004 |
 | Semantic State transversal | Decidida | ADR-0005 |
+| Self model reconstruido, no almacenado | Decidida | ADR-0006 |
+| Target framework .NET 10 | Decidida | ADR-0007 |
+| Afecto funcional, no emociones humanas | Decidida | ADR-0008 |
+| Identidad emergente, no componente | Decidida | ADR-0009 |
+| Percepción precede a cognición | Decidida | ADR-0010 |
 | UI framework | Abierta | — |
 | Proveedor LLM | Abierta | — |
-| Target framework .NET | Abierta | — |
 
 ## 7. Dependencias del Proyecto
 
@@ -181,13 +185,21 @@ docs/
 ├── 10-engine-invariants.md     ← Reglas inquebrantables
 ├── 11-extension-points.md      ← Puntos de extensión
 ├── 12-engine-invariants.md     ← Reglas inquebrantables
+├── 14-development-roadmap.md   ← Plan de desarrollo
+├── 16-agent-architecture.md    ← Arquitectura del agente
+├── 17-computational-agent-model.md ← Modelo computacional formal
 ├── 99-glossary.md              ← Glosario de términos
 └── adr/                        ← Architecture Decision Records
     ├── 0001-use-arch-ecs.md
     ├── 0002-use-sqlite-json.md
     ├── 0003-use-csharp.md
     ├── 0004-llm-as-function.md
-    └── 0005-semantic-state-as-transversal.md
+    ├── 0005-semantic-state-as-transversal.md
+    ├── 0006-self-model-reconstructed.md
+    ├── 0007-target-net10.md
+    ├── 0008-affect-functional-not-human.md
+    ├── 0009-identity-is-emergent.md
+    └── 0010-perception-precedes-cognition.md
 ```
 
 ## 9. Criterio de Completitud del Sprint 0

@@ -1,8 +1,8 @@
 # 16. Agent Architecture
 
-**Versión**: 0.1  
+**Versión**: 0.2  
 **Estado**: Borrador  
-**Última actualización**: 2026-07-28
+**Última actualización**: 2026-07-29
 
 ---
 
@@ -20,41 +20,53 @@ No habla del LLM. No habla de la narrativa. Este documento es el puente entre el
                   Mundo (Simulación ECS)
                         │
                         ▼
-                  Perception
-                        │
-                        ▼
-                  Attention
-                        │
-                        ▼
-               Working Memory
-                        │
-               ┌────────┴────────┐
-               │                 │
-          Reasoning          AffectState
-               │                 │
-          Planning               │
-               │                 │
-          Decision               │
-               │                 │
-               └────────┬────────┘
-                        │
-                        ▼
-                   Action
-                        │
-                        ▼
-                Reflection
-                        │
-                        ▼
-             Long-Term Memory
-                        │
-                        ▼
-           Autobiographical Memory
-                        │
-                        ▼
-              Self Reconstruction
-                        │
-                        ▼
-               Identity (emergente)
+              ┌──────────────────┐
+              │    ACMA vN       │
+              │  (módulo cog-    │
+              │   nitivo inter-  │
+              │   cambiable)     │
+              │                  │
+              │  Perception      │
+              │     │            │
+              │  Attention       │
+              │     │            │
+              │  Working Memory  │
+              │     │            │
+              │  ┌──┴────────┐   │
+              │  │           │   │
+              │ Reasoning  Affect │
+              │  │           │   │
+              │ Planning     │   │
+              │  │           │   │
+              │ Decision     │   │
+              │  │           │   │
+              │  └──┬────────┘   │
+              │     │            │
+              │  Action          │
+              │     │            │
+              │  Audit           │
+              │     │            │
+              │  Memory(consolid)│
+              │     │            │
+              │  Identity Re-    │
+              │  construction    │
+              └──────┬───────────┘
+                     │
+                     ▼
+              SelfSnapshot
+          (existe solo este tick)
+                     │
+                     ▼
+            Semantic Extractor
+                     │
+                     ▼
+               Prompt Builder
+                     │
+                     ▼
+                   LLM
+                     │
+                     ▼
+              Acción / Narrativa
 ```
 
 ---
@@ -328,6 +340,9 @@ Episode
 ### Responsabilidad
 Producir una representación integrada del self a partir del estado interno actual.
 
+### Producto
+SelfSnapshot — una estructura inmutable que existe **únicamente durante el tick actual**. No se almacena en el ECS. No es un componente. No persiste entre ticks.
+
 ### Entradas
 ```
 Autobiographical Memory
@@ -342,7 +357,23 @@ Relationships (active)
   +
 Recent Reflections
   ↓
-SelfModel (reconstruido)
+SelfSnapshot (reconstruido cada tick)
+```
+
+### Estructura de SelfSnapshot
+```
+SelfSnapshot
+├── NarrativeSummary: string
+│   (resumen compuesto de quién soy)
+├── ActivePrinciples: Principle[]
+├── PerceivedCapabilities: Capability[]
+├── SignificantRelationships: Relationship[]
+├── CurrentPriorities: string[]
+├── SelfSummary: string
+│   (integración: objetivos + recuerdos +
+│    relaciones + principios + decisiones
+│    anteriores + modelo del mundo)
+└── CoherenceScore: float [0, 1]
 ```
 
 ### Consultas que responde
@@ -355,7 +386,7 @@ SelfModel (reconstruido)
 - ¿Qué espero?
 
 ### Principio fundamental
-El SelfModel **nunca se almacena** como un componente persistente. Se reconstruye en el momento de la consulta. No existe una variable `Self` en el ECS. El self es el resultado de un cómputo, no una entidad.
+SelfSnapshot **nunca se almacena** como un componente persistente. Se reconstruye cada tick desde cero. No existe una variable `Self` en el ECS. El self es el resultado de un cómputo, no una entidad. Si ningún sistema consulta el self en un tick, no se construye (optimización posible).
 
 ---
 
@@ -364,11 +395,14 @@ El SelfModel **nunca se almacena** como un componente persistente. Se reconstruy
 ### Responsabilidad
 La identidad no es un módulo. Es una **propiedad observada** del sistema que emerge de la interacción de todos los subsistemas anteriores.
 
+### Relación con SelfSnapshot
+SelfSnapshot es la representación del self en un tick. La identidad es la **propiedad observada** de que SelfSnapshot cambia lentamente y de forma coherente a lo largo de muchos ticks.
+
 ### Indicadores
-- **Continuidad**: el agente se percibe como el mismo a lo largo del tiempo
-- **Estabilidad**: las preferencias y principios cambian lentamente
-- **Coherencia**: las acciones son consistentes con el SelfModel
-- **Narrativa personal**: el agente puede contar su propia historia
+- **Continuidad**: SelfSnapshot de ticks sucesivos son similares
+- **Estabilidad**: los principios y prioridades cambian lentamente
+- **Coherencia**: las acciones son consistentes con SelfSnapshot
+- **Narrativa personal**: SelfSnapshot contiene suficiente información para que el LLM genere una historia coherente
 
 ### Medición
 La identidad se evalúa mediante métricas observables (ver AC-009), no mediante componentes internos.
@@ -404,7 +438,34 @@ Planning
 
 ---
 
-## 16. Learning
+## 16. ACMA Module Structure
+
+El agente se implementa como un módulo intercambiable. ACMA v1 es la primera hipótesis implementada sobre la infraestructura del Sprint 3A.
+
+```
+Aeris.Agent/
+├── ACMAVersion.cs      ← identificador de versión
+├── Perception/
+├── Attention/
+├── Affect/
+├── Memory/
+│   ├── WorkingMemorySystem.cs
+│   └── LongTermMemorySystem.cs
+├── WorldModel/
+├── Reasoning/
+├── Goals/
+├── Planning/
+├── Decision/
+├── Audit/
+└── Identity/
+    └── IdentityReconstructionSystem.cs  ← produce SelfSnapshot
+```
+
+El contrato formal de cada sistema está definido en `docs/17-computational-agent-model.md`.
+
+---
+
+## 18. Learning
 
 ### Responsabilidad
 Actualizar el contenido del agente (no el código) basado en la experiencia.
@@ -425,22 +486,22 @@ Actualizar el contenido del agente (no el código) basado en la experiencia.
 
 ---
 
-## 17. Principios de Arquitectura del Agente
+## 19. Principios de Arquitectura del Agente
 
 Estos principios aplican a todos los subsistemas cognitivos definidos en este documento y son verificables en revisiones de código y pruebas.
 
-### 17.1 Determinismo
+### 19.1 Determinismo
 
 El mismo estado inicial, mismos eventos y misma semilla del RNG producen exactamente el mismo estado final. No hay aleatoriedad no controlada en ningún subsistema cognitivo.
 
-### 17.2 Presión de Causalidad (bidireccional)
+### 19.2 Presión de Causalidad (bidireccional)
 
 - **Hacia atrás**: toda conducta observable debe poder trazarse hasta un estado interno simulado.
 - **Hacia adelante**: todo estado interno relevante debe poder influir potencialmente en alguna conducta.
 
 No existen respuestas "programadas" directamente. Ningún subsistema contiene lógica del tipo `if (emotion == X) { Say("...") }`. El estado afectivo modula pesos, umbrales y ruido en el procesamiento; no selecciona respuestas directamente.
 
-### 17.3 Trazabilidad
+### 19.3 Trazabilidad
 
 Toda transición de estado en cualquier subsistema puede explicarse. Cada subsistema expone una **cadena de explicación causal** con estructura uniforme:
 
@@ -469,7 +530,7 @@ Inference
 └── Utility = 0.74
 ```
 
-### 17.4 Contrato Computacional
+### 19.4 Contrato Computacional
 
 Un concepto solo entra al motor si puede expresarse como un contrato computacional con:
 
@@ -480,7 +541,7 @@ Un concepto solo entra al motor si puede expresarse como un contrato computacion
 
 No se incorporan conceptos por plausibilidad teórica o relevancia literaria. Se incorporan cuando existe una especificación computacional verificable.
 
-### 17.5 Localidad Causal
+### 19.5 Localidad Causal
 
 Cada subsistema modifica únicamente el estado que declara explícitamente como salida.
 
@@ -493,7 +554,7 @@ PerceptionSystem
 
 Si un subsistema necesita afectar un estado fuera de su declaración, debe hacerlo mediante un evento o estado intermedio explícito, no como efecto secundario.
 
-### 17.6 Modulación Afectiva
+### 19.6 Modulación Afectiva
 
 El estado afectivo modifica el procesamiento cognitivo (pesos, umbrales, ruido), pero nunca selecciona respuestas directamente. No existe código del tipo `if (affect == X) → branch Y`. Las emociones observables son interpretaciones que el LLM puede generar, no datos internos del motor.
 
