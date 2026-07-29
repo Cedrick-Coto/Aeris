@@ -9,6 +9,7 @@ for (int i = 0; i < args.Length; i++)
 }
 
 var world = new World();
+world.AddResource(TimeResource.Create());
 world.AddResource(new EngineStats());
 
 var engine = new Engine(world);
