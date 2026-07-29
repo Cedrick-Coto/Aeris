@@ -127,7 +127,16 @@ Identity Reconstruction
 
 ### 3.1 PerceptionSystem
 
-**Estado epistemológico**: E1 — Evidencia fuerte. La percepción como traducción de estímulos a representaciones internas es un mecanismo bien establecido.
+**Estado epistemológico**: E1 — Evidencia fuerte.
+
+**Evidence Sources**:
+- Gibson (1979): direct perception / affordances
+- Marr (1982): computational theory of vision
+- Neuroscience: sensory transduction pathways
+
+**Open Questions**:
+- ¿Qué nivel de abstracción deben tener los perceptos para que Reasoning los use sin pérdida?
+- ¿La incertidumbre perceptiva debe modelarse como probabilidad o como rango?
 
 ```
 Entradas:
@@ -152,7 +161,17 @@ Invariantes:
 
 ### 3.2 AttentionSystem
 
-**Estado epistemológico**: E1 — Evidencia fuerte. La atención como filtro con presupuesto computacional limitado está extensamente documentada (Broadbent, Treisman, etc.).
+**Estado epistemológico**: E1 — Evidencia fuerte.
+
+**Evidence Sources**:
+- Broadbent (1958): filter model of attention
+- Treisman (1964): attenuation theory
+- Posner (1980): orienting of attention
+- Corbetta & Shulman (2002): dorsal/ventral attention networks
+
+**Open Questions**:
+- ¿El presupuesto atencional debe ser fijo o dinámico según cognitive load?
+- ¿La saliencia debe ser un producto o una suma ponderada de factores?
 
 ```
 Entradas:
@@ -181,7 +200,18 @@ Invariantes:
 
 ### 3.3 AffectSystem
 
-**Estado epistemológico**: E2 — Evidencia moderada. La modulación afectiva como vector continuo que sesga procesamiento es consistente con la hipótesis del marcador somático (Damasio) y modelos dimensionales (Russell), pero la selección concreta de 9 variables es una decisión de diseño.
+**Estado epistemológico**: E2 — Evidencia moderada.
+
+**Evidence Sources**:
+- Damasio (1994): somatic marker hypothesis
+- Russell (1980): circumplex model of affect
+- Rolls (1999): reinforcement sensitivity theory
+- Panksepp (2004): affective neuroscience
+
+**Open Questions**:
+- ¿9 variables son suficientes? ¿Deberían reducirse o expandirse?
+- ¿Los basales homeostáticos deben ser fijos o aprendidos?
+- ¿El afecto debe influir también en memoria a largo plazo?
 
 ```
 Entradas:
@@ -230,7 +260,16 @@ Invariantes:
 
 ### 3.4 WorkingMemorySystem
 
-**Estado epistemológico**: E1 — Evidencia fuerte. La memoria de trabajo con capacidad limitada, decaimiento y refresco está extensamente validada (Baddeley, Cowan, etc.).
+**Estado epistemológico**: E1 — Evidencia fuerte.
+
+**Evidence Sources**:
+- Baddeley & Hitch (1974): working memory model
+- Cowan (2001): capacity limits (4 ± 1 chunks)
+- Miller (1956): magical number 7 ± 2
+
+**Open Questions**:
+- ¿El chunking debe ser automático o guiado por atención?
+- ¿El decaimiento debe ser temporal o por interferencia?
 
 ```
 Entradas:
@@ -261,7 +300,17 @@ Invariantes:
 
 ### 3.5 LongTermMemorySystem
 
-**Estado epistemológico**: E1 — Evidencia fuerte. La distinción episódica/semántica/procedimental y los procesos de consolidación y olvido están bien documentados (Tulving, Squire, Ebbinghaus).
+**Estado epistemológico**: E1 — Evidencia fuerte.
+
+**Evidence Sources**:
+- Tulving (1972): episodic vs semantic memory
+- Squire (1992): declarative vs procedural memory
+- Ebbinghaus (1885): forgetting curve
+- Nader (2000): reconsolidation
+
+**Open Questions**:
+- ¿La consolidación debe ocurrir por tiempo de inactividad o por umbral de carga?
+- ¿El olvido debe ser por decaimiento o por interferencia?
 
 ```
 Entradas:
@@ -287,7 +336,16 @@ Procesos:
 
 ### 3.6 WorldModelSystem
 
-**Estado epistemológico**: E2 — Evidencia moderada. Los humanos mantenemos modelos internos del mundo, pero la implementación como sistema separado con actualización probabilística es una adaptación de ingeniería.
+**Estado epistemológico**: E2 — Evidencia moderada.
+
+**Evidence Sources**:
+- Craik (1943): internal models as cognitive basis
+- Johnson-Laird (1983): mental models
+- Grush (2004): emulation theory of representation
+
+**Open Questions**:
+- ¿El WorldModel debe ser probabilístico o simbólico?
+- ¿Debe modelar explícitamente las creencias de otros agentes (theory of mind)?
 
 ```
 Entradas:
@@ -311,7 +369,16 @@ Invariantes:
 
 ### 3.7 ReasoningSystem
 
-**Estado epistemológico**: E2 — Evidencia moderada. La inferencia causal, deductiva y abductiva son procesos reconocidos, pero su implementación como sistema determinista con modulación afectiva es una simplificación de ingeniería.
+**Estado epistemológico**: E2 — Evidencia moderada.
+
+**Evidence Sources**:
+- Kahneman (2011): System 1 / System 2
+- Pearl (2000): causal inference
+- Johnson-Laird (2006): mental models and reasoning
+
+**Open Questions**:
+- ¿Debe haber un solo ReasoningSystem o múltiples estrategias seleccionables?
+- ¿La simulación mental debe ser forward, backward o ambas?
 
 ```
 Entradas:
@@ -342,7 +409,16 @@ Invariantes:
 
 ### 3.8 GoalSystem
 
-**Estado epistemológico**: E2 — Evidencia moderada. La priorización de objetivos y su modulación por estado afectivo tiene respaldo (Maslow, Simon), pero la estructura concreta de Goal es una decisión de diseño.
+**Estado epistemológico**: E2 — Evidencia moderada.
+
+**Evidence Sources**:
+- Maslow (1943): hierarchy of needs
+- Simon (1967): motivational and emotional controls of cognition
+- Austin & Vancouver (1996): goal constructs in psychology
+
+**Open Questions**:
+- ¿Los goals deben tener jerarquía fija o prioridades dinámicas?
+- ¿Deben existir goals por defecto o todos deben ser aprendidos?
 
 ```
 Entradas:
@@ -374,7 +450,16 @@ Invariantes:
 
 ### 3.9 PlanningSystem
 
-**Estado epistemológico**: E2 — Evidencia moderada. La planificación como simulación interna y evaluación de cursos de acción tiene respaldo (Hazy, Frith), pero la implementación con WorldModel es una simplificación.
+**Estado epistemológico**: E2 — Evidencia moderada.
+
+**Evidence Sources**:
+- Miller, Galanter & Pribram (1960): plans and TOTE
+- Hazy, Frank & O'Reilly (2007): prefrontal cortex and planning
+- Sutton & Barto (1998): reinforcement learning and planning
+
+**Open Questions**:
+- ¿Cuántos planes debe evaluar por tick antes de seleccionar uno?
+- ¿La simulación de planes debe ser completa o truncada?
 
 ```
 Entradas:
@@ -403,7 +488,16 @@ Invariantes:
 
 ### 3.10 DecisionSystem
 
-**Estado epistemológico**: E2 — Evidencia moderada. La toma de decisiones con modulación por estrés y confianza tiene respaldo (Kahneman, Tversky), pero la arquitectural pipeline es una decisión de ingeniería.
+**Estado epistemológico**: E2 — Evidencia moderada.
+
+**Evidence Sources**:
+- Kahneman & Tversky (1979): prospect theory
+- Damasio (1994): somatic marker hypothesis
+- Gold & Shadlen (2007): neural basis of decision-making
+
+**Open Questions**:
+- ¿La decisión debe ser siempre la óptima evaluada o puede incluir ruido controlado?
+- ¿Debe haber un umbral de confianza mínimo para ejecutar una acción?
 
 ```
 Entradas:
@@ -439,7 +533,17 @@ Invariantes:
 
 ### 3.11 AuditorSystem
 
-**Estado epistemológico**: E3 — Hipótesis de ingeniería. La metaauditoría como sistema separado que observa el razonamiento sin modificarlo es una decisión arquitectónica sin respaldo cognitivo directo.
+**Estado epistemológico**: E3 — Hipótesis de ingeniería.
+
+**Evidence Sources**:
+- No hay respaldo empírico directo para un sistema separado de auditoría cognitiva
+- Inspiración lejana en: Fernández-Duque et al. (2000): executive attention and metacognition
+- Inspiración lejana en: Yeung & Summerfield (2012): metacognition in human decision-making
+
+**Open Questions**:
+- ¿El auditor debe poder corregir el razonamiento en el mismo tick o en el siguiente?
+- ¿Debe existir un metaauditor que audite al auditor?
+- ¿Es mejor un sistema separado o reglas de consistencia integradas en cada subsistema?
 
 ```
 Entradas:
@@ -472,7 +576,18 @@ Invariantes:
 
 ### 3.12 IdentityReconstructionSystem
 
-**Estado epistemológico**: E3 — Hipótesis de ingeniería. La reconstrucción del self desde cero cada tick no tiene respaldo empírico directo. Es una consecuencia de ADR-0006 (Self Model Is Reconstructed), una decisión arquitectónica.
+**Estado epistemológico**: E3 — Hipótesis de ingeniería.
+
+**Evidence Sources**:
+- ADR-0006: Self Model Is Reconstructed (decisión arquitectónica)
+- Inspiración lejana en: Dennett (1991): multiple drafts model of consciousness
+- Inspiración lejana en: Neisser (1988): five kinds of self-knowledge
+- Inspiración lejana en: Conway (2005): self-memory system
+
+**Open Questions**:
+- ¿Cada tick es la frecuencia óptima o debería ser cada N ticks?
+- ¿SelfSnapshot debe incluir predicciones sobre el self futuro?
+- ¿Es posible medir la coherencia del self sin un observador externo?
 
 ```
 Entradas:

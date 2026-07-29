@@ -1106,3 +1106,39 @@ Esta distinción mantiene el proyecto:
 - **Sólido desde el punto de vista de ingeniería**: no dependemos de resolver el hard problem of consciousness.
 - **Defendible desde el punto de vista científico**: no hacemos afirmaciones que no podamos respaldar.
 - **Enfocado en lo construible**: priorizamos la arquitectura funcional sobre la metafísica.
+
+---
+
+## 20. Evolución Futura — Experimental Framework
+
+Una vez que ACMA v1 y la capa de observabilidad (Sprint 3C) existan, el proyecto tendrá la capacidad de responder preguntas experimentales como:
+
+- ¿Qué ocurre si elimino el afecto?
+- ¿Qué ocurre si duplico la capacidad de Working Memory?
+- ¿Qué pasa si Identity Reconstruction se ejecuta cada 10 ticks en lugar de cada tick?
+- ¿Qué cambia si el agente no tiene autobiografía?
+
+Para responderlas sistemáticamente, se propone un **Experimental Framework** como evolución futura (posiblemente renombrando o extendiendo Sprint 6):
+
+```
+Experiment
+│
+├── World Configuration (definir condiciones iniciales)
+├── Simulation Run (ejecutar N ticks con seed X)
+├── Observability (métricas por tick)
+├── Metrics (registro automático)
+└── Analysis (comparar resultados entre configuraciones)
+```
+
+### Capacidades previstas
+
+- Definir experimentos mediante archivos de configuración YAML/JSON
+- Ejecutar múltiples simulaciones con semillas distintas para cada configuración
+- Registrar métricas automáticamente (afecto, decisiones, self snapshots)
+- Comparar dos modelos cognitivos: ACMA v1 vs ACMA v2, o ACMA vs agente mínimo
+- Aislar variables: cambiar un solo parámetro entre dos ejecuciones
+- Generar informes reproducibles (datos + visualizaciones)
+
+### Estado
+
+Este framework **no está planificado** para un sprint concreto. Se documenta aquí como evolución natural del proyecto una vez que la infraestructura cognitiva, el modelo experimental y la observabilidad estén operativos. Cuando el riesgo principal pase de «construir el agente» a «entender el agente», este framework será el siguiente paso lógico.
