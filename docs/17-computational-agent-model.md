@@ -1,6 +1,6 @@
 # 17. Computational Agent Model
 
-**Versión**: 0.1  
+**Versión**: 0.2  
 **Estado**: Borrador  
 **Última actualización**: 2026-07-29
 
@@ -11,6 +11,19 @@
 Este documento define el **modelo computacional del agente** antes de escribir una sola línea de implementación. No describe una implementación concreta, sino el **contrato formal** que cualquier implementación cognitiva (ACMA v1, v2, etc.) debe respetar.
 
 Sirve como puente entre los principios arquitectónicos (ADR-0006, ADR-0008, ADR-0009, ADR-0010) y la implementación del Sprint 3.
+
+### Niveles epistemológicos
+
+Cada subsistema en este documento se clasifica según el tipo de evidencia que lo respalda, no según su importancia funcional:
+
+| Nivel | Etiqueta | Significado |
+|-------|----------|-------------|
+| E1 | Evidencia fuerte | Mecanismo bien documentado en ciencias cognitivas, con respaldo experimental |
+| E2 | Evidencia moderada | Mecanismo con respaldo parcial o adaptado significativamente para esta arquitectura |
+| E3 | Hipótesis de ingeniería | Decisión de diseño pragmática sin respaldo cognitivo directo |
+| E4 | Hipótesis especulativa | Mecanismo propuesto sin respaldo empírico, implementado para exploración |
+
+Esta clasificación no cambia el código. Documenta **qué parte del sistema intenta aproximar resultados bien estudiados y qué parte es una decisión de diseño**.
 
 ---
 
@@ -114,6 +127,8 @@ Identity Reconstruction
 
 ### 3.1 PerceptionSystem
 
+**Estado epistemológico**: E1 — Evidencia fuerte. La percepción como traducción de estímulos a representaciones internas es un mecanismo bien establecido.
+
 ```
 Entradas:
   - World (ECS): entities, componentes, relaciones espaciales
@@ -136,6 +151,8 @@ Invariantes:
 ```
 
 ### 3.2 AttentionSystem
+
+**Estado epistemológico**: E1 — Evidencia fuerte. La atención como filtro con presupuesto computacional limitado está extensamente documentada (Broadbent, Treisman, etc.).
 
 ```
 Entradas:
@@ -163,6 +180,8 @@ Invariantes:
 ```
 
 ### 3.3 AffectSystem
+
+**Estado epistemológico**: E2 — Evidencia moderada. La modulación afectiva como vector continuo que sesga procesamiento es consistente con la hipótesis del marcador somático (Damasio) y modelos dimensionales (Russell), pero la selección concreta de 9 variables es una decisión de diseño.
 
 ```
 Entradas:
@@ -211,6 +230,8 @@ Invariantes:
 
 ### 3.4 WorkingMemorySystem
 
+**Estado epistemológico**: E1 — Evidencia fuerte. La memoria de trabajo con capacidad limitada, decaimiento y refresco está extensamente validada (Baddeley, Cowan, etc.).
+
 ```
 Entradas:
   - Percept[] atendidos
@@ -240,6 +261,8 @@ Invariantes:
 
 ### 3.5 LongTermMemorySystem
 
+**Estado epistemológico**: E1 — Evidencia fuerte. La distinción episódica/semántica/procedimental y los procesos de consolidación y olvido están bien documentados (Tulving, Squire, Ebbinghaus).
+
 ```
 Entradas:
   - WorkingMemoryContent (para consolidación)
@@ -264,6 +287,8 @@ Procesos:
 
 ### 3.6 WorldModelSystem
 
+**Estado epistemológico**: E2 — Evidencia moderada. Los humanos mantenemos modelos internos del mundo, pero la implementación como sistema separado con actualización probabilística es una adaptación de ingeniería.
+
 ```
 Entradas:
   - Percept[] (atendidos, histórico)
@@ -285,6 +310,8 @@ Invariantes:
 ```
 
 ### 3.7 ReasoningSystem
+
+**Estado epistemológico**: E2 — Evidencia moderada. La inferencia causal, deductiva y abductiva son procesos reconocidos, pero su implementación como sistema determinista con modulación afectiva es una simplificación de ingeniería.
 
 ```
 Entradas:
@@ -314,6 +341,8 @@ Invariantes:
 ```
 
 ### 3.8 GoalSystem
+
+**Estado epistemológico**: E2 — Evidencia moderada. La priorización de objetivos y su modulación por estado afectivo tiene respaldo (Maslow, Simon), pero la estructura concreta de Goal es una decisión de diseño.
 
 ```
 Entradas:
@@ -345,6 +374,8 @@ Invariantes:
 
 ### 3.9 PlanningSystem
 
+**Estado epistemológico**: E2 — Evidencia moderada. La planificación como simulación interna y evaluación de cursos de acción tiene respaldo (Hazy, Frith), pero la implementación con WorldModel es una simplificación.
+
 ```
 Entradas:
   - ActiveGoal (el de mayor prioridad)
@@ -371,6 +402,8 @@ Invariantes:
 ```
 
 ### 3.10 DecisionSystem
+
+**Estado epistemológico**: E2 — Evidencia moderada. La toma de decisiones con modulación por estrés y confianza tiene respaldo (Kahneman, Tversky), pero la arquitectural pipeline es una decisión de ingeniería.
 
 ```
 Entradas:
@@ -406,6 +439,8 @@ Invariantes:
 
 ### 3.11 AuditorSystem
 
+**Estado epistemológico**: E3 — Hipótesis de ingeniería. La metaauditoría como sistema separado que observa el razonamiento sin modificarlo es una decisión arquitectónica sin respaldo cognitivo directo.
+
 ```
 Entradas:
   - Action seleccionada
@@ -436,6 +471,8 @@ Invariantes:
 ```
 
 ### 3.12 IdentityReconstructionSystem
+
+**Estado epistemológico**: E3 — Hipótesis de ingeniería. La reconstrucción del self desde cero cada tick no tiene respaldo empírico directo. Es una consecuencia de ADR-0006 (Self Model Is Reconstructed), una decisión arquitectónica.
 
 ```
 Entradas:
@@ -474,53 +511,114 @@ Reglas:
 
 ---
 
-## 4. ACMA como módulo experimental
+## 4. Cognitive Infrastructure vs Cognitive Model
 
-ACMA (Agente Cognitivo con Memoria y Afecto) es el nombre de la primera implementación concreta de este modelo computacional.
+Este documento distingue dos capas dentro del agente:
 
 ```
-Aeris.Agent/               ← namespace del módulo ACMA
-├── ACMAVersion.cs         ← const string con la versión (v1, v2, ...)
-├── Perception/
-│   └── PerceptionSystem.cs
-├── Attention/
-│   └── AttentionSystem.cs
-├── Affect/
-│   └── AffectSystem.cs
-├── Memory/
-│   ├── WorkingMemorySystem.cs
-│   └── LongTermMemorySystem.cs
-├── WorldModel/
-│   └── WorldModelSystem.cs
+Motor ECS
+    │
+    ├── Cognitive Infrastructure (mecanismos)
+    │       Perception, Attention, Memory, Affect, Goals
+    │       └── No dependen de una teoría cognitiva específica
+    │
+    └── Cognitive Model (teoría)
+            ACMA v1, ACMA v2, Minimal Agent, etc.
+            └── Cada uno implementa la misma infraestructura
+                con parámetros, pesos y algoritmos distintos
+```
+
+La **Cognitive Infrastructure** proporciona los mecanismos generales. El **Cognitive Model** decide cómo se configuran, qué pesos tienen y qué teoría implementan.
+
+### 4.1 Cognitive Infrastructure
+
+Son los subsistemas que actúan como **mecanismos** independientes de la teoría cognitiva:
+
+| Subsistema | Rol en infraestructura |
+|------------|----------------------|
+| Perception | Traducir estímulos del ECS a Percept[] |
+| Attention | Filtrar Percept[] por saliencia (presupuesto fijo) |
+| WorkingMemory | Ventana temporal de experiencia inmediata |
+| LongTermMemory | Almacenamiento persistente con olvido |
+| Affect | Vector continuo de modulación (variables intercambiables) |
+| Goals | Priorizar objetivos (estructura genérica) |
+
+La infraestructura no «cree» en ninguna teoría. Proporciona los mecanismos para ejecutar cualquier modelo cognitivo.
+
+### 4.2 Cognitive Model
+
+Es la **teoría cognitiva concreta** que decide:
+
+- Qué variables componen el AffectState (p. ej. ACMA v1 usa Curiosity, Stress, Trust; otro modelo podría usar ExplorationDrive, SocialSafety)
+- Cómo se calcula la saliencia en Attention
+- Los algoritmos de inferencia en Reasoning
+- La estructura de SelfSnapshot
+- Los baselines afectivos (personalidad)
+- Las reglas de Auditor
+
+```
+Motor
+│
+├── Cognitive Infrastructure
+│   ├── PerceptionSystem
+│   ├── AttentionSystem
+│   ├── WorkingMemorySystem
+│   ├── LongTermMemorySystem
+│   ├── AffectSystem (esqueleto: provee el vector)
+│   └── GoalSystem
+│
+└── Cognitive Model (ACMA v1, v2, ...)
+    ├── AffectModel (define las variables concretas)
+    ├── ReasoningStrategy
+    ├── PlanningStrategy
+    ├── DecisionStrategy
+    ├── AuditorRules
+    ├── IdentityReconstruction
+    └── WorldModel
+```
+
+### 4.3 ACMA v1
+
+ACMA (Agente Cognitivo con Memoria y Afecto) es el nombre del primer Cognitive Model concreto.
+
+```
+Aeris.Agent/               ← namespace del Cognitive Model
+├── ACMAVersion.cs         ← "v1"
+├── AffectModel/
+│   └── ACMAAffectState.cs ← 9 variables específicas
 ├── Reasoning/
-│   └── ReasoningSystem.cs
+│   └── ACMAReasoning.cs
 ├── Goals/
-│   └── GoalSystem.cs
+│   └── ACMAGoalPriorities.cs
 ├── Planning/
-│   └── PlanningSystem.cs
+│   └── ACMAPlanner.cs
 ├── Decision/
-│   └── DecisionSystem.cs
+│   └── ACMADecisionTree.cs
+├── WorldModel/
+│   └── ACMAWorldModel.cs
 ├── Audit/
-│   └── AuditorSystem.cs
+│   └── ACMAAuditorRules.cs
 └── Identity/
-    └── IdentityReconstructionSystem.cs
+    └── ACMAIdentityReconstruction.cs
 ```
 
-### Contrato de versión
+### 4.4 Contrato de versión
 
 | Versión | Estado | Base teórica |
 |---------|--------|--------------|
 | ACMA v1 | Planned | Modelo funcional con afecto vectorial y self reconstruido |
+| ACMA v2 | — | Abierto a futuras hipótesis |
+| Minimal Agent | — | Versión mínima para testing sin teoría cognitiva |
 
-Cada nueva versión de ACMA puede:
-- Cambiar la implementación interna de cualquier sistema
-- Añadir nuevos sistemas
+Cada versión puede:
+- Cambiar la implementación interna de cualquier sistema del Cognitive Model
+- Añadir nuevas variables al AffectState
 - Cambiar algoritmos de modulación afectiva
 - Cambiar la estructura de SelfSnapshot
 
 No puede:
 - Cambiar el orden de la cadena causal
-- Cambiar las interfaces de entrada/salida de los sistemas
+- Cambiar las interfaces de entrada/salida de los sistemas de infraestructura
 - Romper el determinismo del núcleo
 
 ---

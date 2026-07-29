@@ -23,11 +23,11 @@ El objetivo no es "hacer que Aeris piense como un humano", sino **construir una 
 ## 3. Progresión de Sprints
 
 ```
-Sprint 0 ──► Sprint 1 ──► Sprint 2 ──► Sprint 3A ──► Sprint 3B ──► Sprint 4 ──► Sprint 5 ──► Sprint 6 ──► Sprint 7
-Arquitec.    Motor ECS    Sem. Extr.   Infra.       ACMA v1      LLM          Narrativa    Mundo Pok.   Aeris
-(FROZEN)     (COMPL.)     (Pend.)      Cognitiva    (Modelo      (Verbaliz.)  (Pipeline)   (Modelado)   (Personaje)
+Sprint 0 ──► Sprint 1 ──► Sprint 2 ──► Sprint 3A ──► Sprint 3B ──► Sprint 3C ──► Sprint 4 ──► Sprint 5 ──► Sprint 6 ──► Sprint 7
+Arquitec.    Motor ECS    Sem. Extr.   Infra.       ACMA v1      Observa-     LLM          Narrativa    Mundo Pok.   Aeris
+(FROZEN)     (COMPL.)     (Pend.)      Cognitiva    (Modelo      bilidad      (Verbaliz.)  (Pipeline)   (Modelado)   (Personaje)
                                         (Sistemas    Experimental)
-                                        generales)
+                                        Generales)
 ```
 
 ### Dependencias entre Sprints
@@ -38,6 +38,7 @@ Sprint 0 (S0)
          └──► Sprint 2 (S2)
                 └──► Sprint 3A (S3A)
                        └──► Sprint 3B (S3B)
+                       └──► Sprint 3C (S3C)
                               └──► Sprint 4 (S4)
                                      └──► Sprint 5 (S5)
                                             └──► Sprint 6 (S6)
@@ -557,11 +558,97 @@ Aeris.Agent/               ← namespace
 - SelfSnapshot generation: < 1ms
 
 ### Dependencias
-- Sprint 2 completo
+- Sprint 3B completo
 
 ---
 
-## 9. Sprint 4 — Integración LLM
+## 9. Sprint 3C — Observabilidad
+
+**Objetivo**: Añadir herramientas de observabilidad para investigar el comportamiento del agente. No añade inteligencia nueva, pero permite analizar y falsar hipótesis sobre el agente sin depender únicamente de la narrativa generada.
+
+**Estado**: Pendiente.
+
+### Naturaleza del Sprint
+
+Si Aeris aspira a ser también un proyecto de investigación, esta capa es casi tan valiosa como la propia arquitectura. Permite responder preguntas como "¿por qué el agente tomó esta decisión?" sin recurrir a la introspección del LLM.
+
+### Alcance
+
+```
+ObservabilityLayer
+├── SelfSnapshot Inspector
+│   ├── Ver contenido completo del snapshot actual
+│   ├── Comparar con snapshot de ticks anteriores
+│   └── Visualizar evolución de principios y prioridades
+│
+├── AffectState Visualizer
+│   ├── Serie temporal de cada variable del vector afectivo
+│   ├── Correlación entre variables y eventos externos
+│   └── Detección de cambios bruscos
+│
+├── Goal Activation Graph
+│   ├── Árbol de objetivos activos con prioridades
+│   ├── Historial de activación/desactivación
+│   └── Trazabilidad: qué evento activó cada goal
+│
+├── Causal Decision Trace
+│   ├── Cadena causal completa de una acción:
+│       Percept → Attention → WM → Affect → Reasoning → Goal → Plan → Decision
+│   ├── Pesos y umbrales en cada paso
+│   └── Alternativas consideradas y descartadas
+│
+├── Attention Tree
+│   ├── Perceptos recibidos vs atendidos
+│   ├── Puntuación de saliencia por percepto
+│   └── Perceptos descartados (y por qué)
+│
+├── Identity Timeline
+│   ├── Snapshots anteriores (resumen)
+│   ├── Índice de cambio entre ticks
+│   ├── Detección de puntos de inflexión
+│   └── Coherencia narrativa a lo largo del tiempo
+│
+└── Reason Trace
+    ├── Explicación automática de cada acción
+    ├── Formato: "Action X porque {evidence} → {inference}"
+    ├── Distinción explícita entre evidencia e inferencia
+    └── Exportable a texto para depuración
+```
+
+### Entregables
+- Módulo `Aeris.Observability` (namespace separado, sin dependencia del Cognitive Model)
+- SelfSnapshot Inspector funcional
+- AffectState Visualizer con serie temporal
+- Goal Activation Graph con trazabilidad
+- Causal Decision Trace para cualquier acción
+- Attention Tree por tick
+- Identity Timeline con detección de cambios
+- Reason Trace exportable
+
+### Criterio de diseño
+
+La capa de observabilidad debe poder activarse/desactivarse en tiempo de compilación o configuración. Cuando está desactivada, debe producir **cero allocations por tick**. No debe afectar el rendimiento ni el determinismo del núcleo cuando no está en uso.
+
+### Definition of Done
+1. Cada herramienta produce salida válida para un agente funcionando
+2. El Causal Decision Trace muestra la cadena completa de una acción
+3. El Reason Trace produce explicaciones en formato legible
+4. La capa se puede desactivar sin afectar el comportamiento del agente
+5. Con observabilidad desactivada: 0 allocations adicionales
+6. Tests pasan
+
+### Métricas mínimas
+- Build: 0 errores, 0 warnings
+- Overhead (activado): < 1ms por tick
+- Overhead (desactivado): 0 allocations
+- Cobertura de trazabilidad: 100% de las acciones tienen trace
+
+### Dependencias
+- Sprint 3C completo
+
+---
+
+## 10. Sprint 4 — Integración LLM
 
 **Objetivo**: Integrar el LLM como verbalizador, no como pensador. El LLM nunca modifica beliefs, emotion, memory, goals o world. Solo propone y narra.
 
@@ -655,7 +742,7 @@ Validation
 
 ---
 
-## 10. Sprint 5 — Narrativa
+## 11. Sprint 5 — Narrativa
 
 **Objetivo**: El agente ya existe. Ahora aprende a hablar.
 
@@ -723,7 +810,7 @@ Presentation
 
 ---
 
-## 11. Sprint 6 — Mundo Pokémon
+## 12. Sprint 6 — Mundo Pokémon
 
 **Objetivo**: Modelar el universo Pokémon: biología, aura, ecosistemas, cultura, lenguaje, evolución, regiones y facciones.
 
@@ -801,7 +888,7 @@ Player
 
 ---
 
-## 12. Sprint 7 — Aeris
+## 13. Sprint 7 — Aeris
 
 **Objetivo**: Aquí aparece el personaje. No antes.
 
@@ -868,7 +955,7 @@ Narrative Development
 
 ---
 
-## 13. Nueva Estructura de la Arquitectura
+## 14. Nueva Estructura de la Arquitectura
 
 ```
                          Mundo ECS
@@ -925,7 +1012,7 @@ ACMA internamente (Sprint 3B):
 
 ---
 
-## 14. Issues Arquitectónicos
+## 15. Issues Arquitectónicos
 
 | ID     | Prioridad | Descripción |
 | ------ | --------- | ----------- |
@@ -942,7 +1029,7 @@ ACMA internamente (Sprint 3B):
 
 ---
 
-## 15. Métricas Generales
+## 16. Métricas Generales
 
 ### Por Sprint
 
@@ -953,6 +1040,7 @@ ACMA internamente (Sprint 3B):
 | S2 | 0 errores | 100% pass | < 10ms extracción | > 70% | 100% |
 | S3A | 0 errores | 100% pass | < 5ms/tick | > 75% | 100% |
 | S3B | 0 errores | 100% pass | < 10ms/tick | > 75% | 100% |
+| S3C | 0 errores | 100% pass | < 1ms (activado) / 0 alloc (desactivado) | — | 100% |
 | S4 | 0 errores | 100% pass | < 5s LLM | > 70% | N/A (LLM es probabilístico) |
 | S5 | 0 errores | 100% pass | < 50ms pipeline | > 70% | N/A |
 | S6 | 0 errores | 100% pass | < 5ms/tick | > 60% | 100% (simulación determinista) |
@@ -967,28 +1055,28 @@ ACMA internamente (Sprint 3B):
 
 ---
 
-## 16. Reglas de Desarrollo
+## 17. Reglas de Desarrollo
 
-### 16.1 Antes de empezar un Sprint
+### 17.1 Antes de empezar un Sprint
 1. La dependencia directa está completa
 2. Todos los tests de la dependencia pasan
 3. No hay errores de compilación
 4. La documentación de la dependencia está actualizada
 
-### 16.2 Durante un Sprint
+### 17.2 Durante un Sprint
 1. Implementar en orden de dependencias
 2. Tests unitarios antes de integración
 3. Commit frecuente con mensajes descriptivos
 4. Revisar métricas antes de continuar
 
-### 16.3 Al finalizar un Sprint
+### 17.3 Al finalizar un Sprint
 1. Todos los tests pasan
 2. Métricas mínimas alcanzadas
 3. Documentación actualizada
 4. Demo funcional (si aplica)
 5. Retrospectiva: qué funcionó, qué no
 
-### 16.4 Si una decisión arquitectónica falla
+### 17.4 Si una decisión arquitectónica falla
 1. Documentar la evidencia
 2. Crear ADR nueva (no editar la existente)
 3. Actualizar la especificación afectada
@@ -996,7 +1084,7 @@ ACMA internamente (Sprint 3B):
 
 ---
 
-## 17. Riesgos Conocidos
+## 18. Riesgos Conocidos
 
 | Riesgo | Impacto | Probabilidad | Mitigación |
 |--------|---------|--------------|------------|
@@ -1010,7 +1098,7 @@ ACMA internamente (Sprint 3B):
 
 ---
 
-## 18. Límite Epistemológico
+## 19. Límite Epistemológico
 
 El proyecto Aeris implementa un **modelo funcional de agencia y experiencia subjetiva**. No afirma que Aeris tenga conciencia fenomenológica, experiencia subjetiva (qualia), o un "yo" real. El sistema produce comportamientos que *simulan* estos fenómenos, pero no se hacen afirmaciones ontológicas sobre la presencia o ausencia de conciencia.
 

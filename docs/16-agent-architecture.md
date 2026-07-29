@@ -1,6 +1,6 @@
 # 16. Agent Architecture
 
-**Versión**: 0.2  
+**Versión**: 0.3  
 **Estado**: Borrador  
 **Última actualización**: 2026-07-29
 

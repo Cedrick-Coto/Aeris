@@ -38,34 +38,50 @@ Ver [ADR hierarchy](docs/adr/README.md) para la clasificación completa.
 ## Arquitectura
 
 ```
-                    Mundo ECS
-                       │
-                 Simulation Tick
-                       │
-                Semantic Extractor
-                       │
-                ┌──────┴──────┐
-                │   ACMA vN   │
-                │  (módulo    │
-                │  cognitivo  │
-                │  intercam-  │
-                │  biable)    │
-                └──────┬──────┘
-                       │
-               SelfSnapshot
-            (existe solo este tick)
-                       │
-                ┌──────┴──────┐
-                │  Narrative  │
-                │  Pipeline   │
-                └──────┬──────┘
-                       │
-                     LLM
-                       │
-             Narrativa / Diálogo
+                         Mundo ECS
+                            │
+                      Simulation Tick
+                            │
+                     Semantic Extractor
+                            │
+                 ┌──────────┴──────────┐
+                 │  Cognitive Infra.   │
+                 │  (mecanismos)       │
+                 │  Perception         │
+                 │  Attention          │
+                 │  Memory             │
+                 │  Affect (vector)    │
+                 │  Goals              │
+                 └──────────┬──────────┘
+                            │
+                 ┌──────────┴──────────┐
+                 │  Cognitive Model    │
+                 │  (teoría)           │
+                 │  ┌─ ACMA v1 ────┐   │
+                 │  │ Reasoning    │   │
+                 │  │ Planning     │   │
+                 │  │ Decision     │   │
+                 │  │ Auditor      │   │
+                 │  │ Identity     │   │
+                 │  │ World Model  │   │
+                 │  └──────────────┘   │
+                 └──────────┬──────────┘
+                            │
+                    SelfSnapshot
+                 (existe solo este tick)
+                            │
+                 ┌──────────┴──────────┐
+                 │  Narrative Pipeline │
+                 └──────────┬──────────┘
+                            │
+                          LLM
+                            │
+                  Narrativa / Diálogo
 ```
 
 El LLM opera sobre la **frontera determinismo/probabilismo**: recibe `SelfSnapshot` + `SemanticState` deterministas y produce narrativa probabilística. Nunca modifica el estado interno del agente.
+
+La **Cognitive Infrastructure** proporciona mecanismos generales (percepción, atención, memoria, afecto vectorial, goals). El **Cognitive Model** (ACMA v1, v2, ...) implementa una teoría cognitiva concreta sobre esa infraestructura. Separar ambas capas permite intercambiar modelos sin cambiar el motor.
 
 Para una descripción detallada de cada subsistema: [`docs/16-agent-architecture.md`](docs/16-agent-architecture.md).
 
@@ -87,9 +103,9 @@ Para una descripción detallada de cada subsistema: [`docs/16-agent-architecture
 ## Roadmap de Desarrollo
 
 ```
-Sprint 0 ──► Sprint 1 ──► Sprint 2 ──► Sprint 3A ──► Sprint 3B ──► Sprint 4 ──► Sprint 5 ──► Sprint 6 ──► Sprint 7
-Arquitec.    Motor ECS    Sem. Extr.   Infra.       ACMA v1      LLM          Narrativa    Mundo Pok.   Aeris
-(FROZEN)     (COMPL.)     (Pend.)      Cognitiva    (Modelo      (Verbaliz.)  (Pipeline)   (Modelado)   (Personaje)
+Sprint 0 ──► Sprint 1 ──► Sprint 2 ──► Sprint 3A ──► Sprint 3B ──► Sprint 3C ──► Sprint 4 ──► Sprint 5 ──► Sprint 6 ──► Sprint 7
+Arquitec.    Motor ECS    Sem. Extr.   Infra.       ACMA v1      Observa-     LLM          Narrativa    Mundo Pok.   Aeris
+(FROZEN)     (COMPL.)     (Pend.)      Cognitiva    (Modelo      bilidad      (Verbaliz.)  (Pipeline)   (Modelado)   (Personaje)
                                         (Sistemas    Experimental)
                                         Generales)
 ```
@@ -101,6 +117,7 @@ Arquitec.    Motor ECS    Sem. Extr.   Infra.       ACMA v1      LLM          Na
 | Sprint 2 | ⏳ Planned  | Semantic Extractor (extraer estado del mundo → SemanticState para el LLM)                      |
 | Sprint 3A| ⏳ Planned  | Infraestructura cognitiva (11 sistemas ECS deterministas)                                      |
 | Sprint 3B| ⏳ Planned  | ACMA v1 — primera hipótesis experimental del agente                                            |
+| Sprint 3C| ⏳ Planned  | Observabilidad (SelfSnapshot Inspector, Decision Trace, Reason Trace, etc.)                    |
 | Sprint 4 | ⏳ Planned  | Integración LLM (verbalizador, no pensador)                                                    |
 | Sprint 5 | ⏳ Planned  | Narrativa (Diálogo, Monólogo interno, Narración contextual)                                    |
 | Sprint 6 | ⏳ Planned  | Mundo Pokémon (Biología, Aura, Ecosistemas, Cultura, Lenguaje, Facciones)                      |
