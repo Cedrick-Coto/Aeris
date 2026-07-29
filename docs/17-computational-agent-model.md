@@ -1,6 +1,6 @@
 # 17. Computational Agent Model
 
-**Versión**: 0.2  
+**Versión**: 0.3  
 **Estado**: Borrador  
 **Última actualización**: 2026-07-29
 
@@ -137,6 +137,7 @@ Identity Reconstruction
 **Open Questions**:
 - ¿Qué nivel de abstracción deben tener los perceptos para que Reasoning los use sin pérdida?
 - ¿La incertidumbre perceptiva debe modelarse como probabilidad o como rango?
+- (Ver también H-0004 para la representación de incertidumbre)
 
 ```
 Entradas:
@@ -172,6 +173,7 @@ Invariantes:
 **Open Questions**:
 - ¿El presupuesto atencional debe ser fijo o dinámico según cognitive load?
 - ¿La saliencia debe ser un producto o una suma ponderada de factores?
+- (Ver H-0002: presupuesto dinámico por CognitiveLoad)
 
 ```
 Entradas:
@@ -212,6 +214,7 @@ Invariantes:
 - ¿9 variables son suficientes? ¿Deberían reducirse o expandirse?
 - ¿Los basales homeostáticos deben ser fijos o aprendidos?
 - ¿El afecto debe influir también en memoria a largo plazo?
+- (Ver RN-0002 para el respaldo teórico de cada variable)
 
 ```
 Entradas:
@@ -270,6 +273,7 @@ Invariantes:
 **Open Questions**:
 - ¿El chunking debe ser automático o guiado por atención?
 - ¿El decaimiento debe ser temporal o por interferencia?
+- (Ver H-0001: chunking guiado por atención)
 
 ```
 Entradas:
@@ -346,6 +350,7 @@ Procesos:
 **Open Questions**:
 - ¿El WorldModel debe ser probabilístico o simbólico?
 - ¿Debe modelar explícitamente las creencias de otros agentes (theory of mind)?
+- (Ver H-0004: WorldModel probabilístico; RN-0005 para el respaldo teórico)
 
 ```
 Entradas:
@@ -419,6 +424,7 @@ Invariantes:
 **Open Questions**:
 - ¿Los goals deben tener jerarquía fija o prioridades dinámicas?
 - ¿Deben existir goals por defecto o todos deben ser aprendidos?
+- (Ver H-0005: prioridades dinámicas moduladas por afecto)
 
 ```
 Entradas:
@@ -460,6 +466,7 @@ Invariantes:
 **Open Questions**:
 - ¿Cuántos planes debe evaluar por tick antes de seleccionar uno?
 - ¿La simulación de planes debe ser completa o truncada?
+- (Ver H-0006: horizonte de planificación truncado; RN-0006 para el respaldo teórico)
 
 ```
 Entradas:
@@ -588,6 +595,7 @@ Invariantes:
 - ¿Cada tick es la frecuencia óptima o debería ser cada N ticks?
 - ¿SelfSnapshot debe incluir predicciones sobre el self futuro?
 - ¿Es posible medir la coherencia del self sin un observador externo?
+- (Ver H-0003: frecuencia de reconstrucción; RN-0003 para el respaldo teórico)
 
 ```
 Entradas:
@@ -794,6 +802,17 @@ Regla: el LLM nunca ve:
 | Tipo | ID | Tema |
 |------|----|------|
 | Research Note | RN-0001 | Working Memory (Baddeley) |
+| Research Note | RN-0002 | Modelos de Afecto |
+| Research Note | RN-0003 | Identidad y Reconstrucción del Self |
+| Research Note | RN-0004 | Modelos de Atención |
+| Research Note | RN-0005 | Modelos Internos del Mundo |
+| Research Note | RN-0006 | Planificación en Agentes Cognitivos |
+| Hypothesis | H-0001 | Working Memory chunking guiado por atención |
+| Hypothesis | H-0002 | Presupuesto atencional dinámico por CognitiveLoad |
+| Hypothesis | H-0003 | Frecuencia de reconstrucción de identidad |
+| Hypothesis | H-0004 | WorldModel probabilístico vs simbólico |
+| Hypothesis | H-0005 | Prioridades de goals dinámicas |
+| Hypothesis | H-0006 | Horizonte de planificación truncado |
 
 ---
 

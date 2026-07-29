@@ -16,6 +16,8 @@ Este directorio contiene hipótesis de investigación del proyecto Aeris.
 
 Las hipótesis permiten explorar diseños sin comprometer la arquitectura. Son especialmente útiles en los sprints de investigación (Sprint 3 en adelante), donde muchas decisiones son experimentales.
 
+Cada hipótesis se origina de una **Open Question** en `docs/17-computational-agent-model.md` y se respalda con **Research Notes** en `docs/research-notes/`. Este flujo mantiene separadas la evidencia (RN), la especulación (Hypothesis) y la decisión (ADR).
+
 ---
 
 ## Ciclo de vida
@@ -43,27 +45,55 @@ Cada hipótesis sigue esta estructura:
 
 **Estado**: Proposed | Validated | Rejected
 **Fecha**: YYYY-MM-DD
-**Autor**: Nombre
+**Subsistemas afectados**: §X.Y, §X.Z
+**Estado epistemológico**: E1–E4
 
-## Hipótesis
+## Enunciado
 
 Enunciado claro de lo que se cree que sucederá.
 
-## Fundamento
+## Motivación
 
-Por qué se cree que esto puede funcionar (literatura, intuición, experimentos previos).
+Por qué es relevante para la arquitectura.
 
-## Experimento
+## Evidence Sources
 
-Cómo se va a validar o refutar:
-- Condiciones del experimento
-- Métricas observables
-- Criterio de éxito/fracaso
+Literatura relevante, referencias a RN.
 
-## Resultado
+## Experimento propuesto
 
-(Se completa después de la validación)
-- Datos recogidos
-- Conclusión: Validada / Rechazada
-- Implicaciones para la arquitectura
+Cómo se va a validar o refutar.
+
+## Métricas
+
+Variables observables para evaluar la hipótesis.
+
+## Criterio de validación
+
+Qué valores determinan éxito o fracaso.
+
+## Posibles resultados
+
+Tabla de resultados posibles e interpretación.
+
+## Impacto arquitectónico si se valida
+
+Qué cambios requiere en la especificación.
+
+## Impacto arquitectónico si se rechaza
+
+Qué cambios implica la refutación.
 ```
+
+---
+
+## Hipótesis activas
+
+| ID | Tema | Subsistemas | Estado epistemológico | Estado |
+|----|------|-------------|----------------------|--------|
+| H-0001 | Working Memory chunking guiado por atención | WM (§3.4), Attention (§3.2) | E1 | Proposed |
+| H-0002 | Presupuesto atencional dinámico por CognitiveLoad | Attention (§3.2), Affect (§3.3) | E1–E2 | Proposed |
+| H-0003 | Frecuencia de reconstrucción de identidad | Identity (§3.12) | E3 | Proposed |
+| H-0004 | WorldModel probabilístico vs simbólico | WorldModel (§3.6), Reasoning (§3.7) | E2 | Proposed |
+| H-0005 | Prioridades de goals dinámicas | Goals (§3.8), Affect (§3.3) | E2 | Proposed |
+| H-0006 | Horizonte de planificación truncado | Planning (§3.9), Decision (§3.10) | E2 | Proposed |

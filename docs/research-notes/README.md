@@ -59,6 +59,11 @@ Si esta nota ha influido en alguna decisi처n arquitect처nica, se referencia aqu�
 
 ## RNs activos
 
-| ID | Tema | Estado | Impacto |
-|----|------|--------|---------|
-| RN-0001 | Working Memory (Baddeley) | Referenced | WorkingMemorySystem, AttentionSystem |
+| ID | Tema | Estado | Impacto | Hip처tesis relacionada |
+|----|------|--------|---------|----------------------|
+| RN-0001 | Working Memory (Baddeley) | Referenced | WM, Attention | H-0001 |
+| RN-0002 | Modelos de Afecto | Referenced | Affect, todos los subsistemas | H-0002, H-0005 |
+| RN-0003 | Identidad y Reconstrucci처n del Self | Reviewing | Identity, SemanticExtractor | H-0003 |
+| RN-0004 | Modelos de Atenci처n | Referenced | Attention, WM | H-0002 |
+| RN-0005 | Modelos Internos del Mundo | Reviewing | WorldModel, Planning, Reasoning | H-0004 |
+| RN-0006 | Planificaci처n en Agentes Cognitivos | Reviewing | Planning, Decision, WorldModel | H-0004, H-0006 |
