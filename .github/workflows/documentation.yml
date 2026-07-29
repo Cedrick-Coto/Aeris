@@ -15,10 +15,10 @@ jobs:
       - name: Check internal links
         run: |
           echo "Checking for broken internal references..."
-          # Verifica que los archivos referenciados en docs/ existan
-          grep -oP 'docs/\S+' docs/*.md | sed 's/.*docs\///' | sed 's/[):].*//' | sort -u | while read f; do
-            if [ ! -f "docs/$f" ] && [ ! -f "$f" ]; then
-              echo "  MISSING: $f"
+          # Extrae rutas docs/... de todos los .md (recursivo) y verifica que existan
+          find docs/ README.md -name '*.md' -exec grep -oPh 'docs/[^)''"` >\t]+' {} + | sort -u | while IFS= read -r ref; do
+            if [ ! -e "$ref" ]; then
+              echo "  MISSING: $ref"
               exit 1
             fi
           done

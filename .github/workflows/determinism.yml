@@ -21,9 +21,9 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release
 
-      - name: Run twice and compare
+      - name: Run twice with same seed and compare
         run: |
-          mkdir -p /tmp/determinism
-          dotnet run --project benchmarks/Aeris.Benchmarks -c Release -- --seed 42 2>/dev/null > /tmp/determinism/run1.txt
-          dotnet run --project benchmarks/Aeris.Benchmarks -c Release -- --seed 42 2>/dev/null > /tmp/determinism/run2.txt
-          diff /tmp/determinism/run1.txt /tmp/determinism/run2.txt && echo "✓ Determinism verified" || (echo "✗ Determinism FAILED" && exit 1)
+            mkdir -p /tmp/determinism
+            dotnet run --project benchmarks/Aeris.Benchmarks -c Release -- --seed 42 2>/dev/null | sed 's/Tick [0-9]*: [0-9.]*ms/Tick N: X.XXXXms/' > /tmp/determinism/run1.txt
+            dotnet run --project benchmarks/Aeris.Benchmarks -c Release -- --seed 42 2>/dev/null | sed 's/Tick [0-9]*: [0-9.]*ms/Tick N: X.XXXXms/' > /tmp/determinism/run2.txt
+            diff /tmp/determinism/run1.txt /tmp/determinism/run2.txt && echo "✓ Determinism verified" || (echo "✗ Determinism FAILED" && exit 1)

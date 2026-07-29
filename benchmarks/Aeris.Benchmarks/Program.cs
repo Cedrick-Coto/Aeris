@@ -1,9 +1,20 @@
 using Aeris.Engine;
 
+// Parse --seed for deterministic RNG (infrastructure for when randomness is added)
+int? seed = null;
+for (int i = 0; i < args.Length; i++)
+{
+    if (args[i] == "--seed" && i + 1 < args.Length)
+        seed = int.Parse(args[i + 1]);
+}
+
 var world = new World();
 world.AddResource(new EngineStats());
 
 var engine = new Engine(world);
+
+if (seed.HasValue)
+    Console.WriteLine($"Seed: {seed}");
 
 Console.WriteLine("Aeris Engine - Sprint 1.1");
 Console.WriteLine("========================");
