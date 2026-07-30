@@ -39,7 +39,7 @@ public sealed class Engine
             _world.AddResource(new AttentionStore());
 
         if (!_world.HasResource<CognitiveTraceLog>())
-            _world.AddResource(new CognitiveTraceLog());
+            _world.AddResource(new CognitiveTraceLog { Tick = 0 });
         if (!_world.HasResource<WorkingMemoryStore>())
             _world.AddResource(new WorkingMemoryStore());
         if (!_world.HasResource<WorldModelState>())
@@ -76,6 +76,13 @@ public sealed class Engine
 
         time.Advance(deltaTime);
         _world.SetResource(time);
+
+        if (_world.HasResource<CognitiveTraceLog>())
+        {
+            var trace = _world.GetResource<CognitiveTraceLog>();
+            trace.Tick = time.Tick;
+            trace.ResetTick();
+        }
 
         if (_world.HasResource<SchedulerResource>())
         {
