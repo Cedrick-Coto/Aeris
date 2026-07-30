@@ -2,7 +2,7 @@
 
 **Estado**: Draft  
 **Última actualización**: 2026-07-30  
-**Versión**: 0.1  
+**Versión**: 0.2  
 
 ---
 
@@ -98,9 +98,10 @@ Cada inferencia debe contener:
 |-------|------|-------------|
 | `Id` | uint | Identificador único |
 | `Premises` | EvidenceRef[] | Referencias a hechos origen |
+| `RuleId` | string | Identificador de la regla que produjo la inferencia |
 | `Transformation` | string | Etiqueta del tipo de transformación aplicada |
 | `Conclusion` | string | Descripción de la conclusión |
-| `Confidence` | float | Soporte interno [0, 1] |
+| `Confidence` | float | Soporte interno del algoritmo [0, 1] |
 
 ### Ejemplo
 
@@ -108,6 +109,9 @@ Cada inferencia debe contener:
 Premises:
   - (Río observado al norte)
   - (Memoria: aldea cercana a río)
+
+RuleId:
+  spatial-association-001
 
 Transformation:
   SpatialAssociation
@@ -126,11 +130,15 @@ Análogo a RetrievalEvidence:
 | Campo | Tipo | Descripción |
 |-------|------|-------------|
 | `InferenceId` | uint | ID de la inferencia |
+| `RuleId` | string | Regla que produjo la inferencia |
 | `PremiseCount` | int | Número de premisas utilizadas |
 | `Transformation` | string | Tipo de transformación |
-| `Confidence` | float | Confianza asignada |
+| `Confidence` | float | Confianza asignada por el algoritmo |
+| `EvidenceStrength` | float | Solidez de la transición causal [0, 1] |
 | `Strategy` | string | Nombre de la estrategia |
 | `ElapsedMicroseconds` | long | Tiempo de cómputo |
+
+**Confidence vs EvidenceStrength**: `Confidence` es la valoración interna del algoritmo de razonamiento sobre la inferencia. `EvidenceStrength` es la solidez de la transición causal registrada en el trace (pueden coincidir, pero no son equivalentes — una inferencia puede tener alta confianza y baja evidencia causal si el algoritmo está sesgado, o viceversa).
 
 ---
 
@@ -150,14 +158,34 @@ ScoreConfidence
 EmitInferences
 ```
 
+### Identidad de reglas
+
+Toda regla tiene una identidad única que permite rastrear qué transformación produjo cada inferencia:
+
+```csharp
+RuleDescriptor
+{
+    string RuleId;          // "spatial-association-001"
+    string Label;           // "SpatialAssociation"
+    int Version;            // 1
+    string Description;     // "If A is at location L and A is spatially related to B, B is likely near L"
+}
+```
+
+Esto permite después saber:
+
+- qué regla produjo una inferencia;
+- qué reglas son responsables de errores;
+- comparar modelos por perfil de reglas activadas.
+
 ### Reglas baseline iniciales (extensibles)
 
-| Regla | Condición | Inferencia |
-|-------|-----------|------------|
-| SpatialAssociation | Hecho A (ubicación) + Hecho B (relación espacial conocida) | B probable en ubicación de A |
-| CausalSequence | Evento A observado + patrón A→B conocido | B probable después de A |
-| GoalRelevance | Hecho A + Goal activo relacionado | A es relevante para Goal |
-| Contradiction | Hecho A + Hecho B mutuamente excluyentes | Conflicto detectado |
+| RuleId | Regla | Condición | Inferencia |
+|--------|-------|-----------|------------|
+| `spatial-association-001` | SpatialAssociation | Hecho A (ubicación) + Hecho B (relación espacial conocida) | B probable en ubicación de A |
+| `causal-sequence-001` | CausalSequence | Evento A observado + patrón A→B conocido | B probable después de A |
+| `goal-relevance-001` | GoalRelevance | Hecho A + Goal activo relacionado | A es prioritario (no más verdadero) para Goal |
+| `contradiction-001` | Contradiction | Hecho A + Hecho B mutuamente excluyentes | Conflicto detectado |
 
 No es un switch:
 
@@ -171,9 +199,9 @@ Sino un conjunto de transformaciones registradas:
 ruleSet.ApplyAll(facts) → Inference[]   // ✅
 ```
 
-Cada inferencia registra qué regla se aplicó y con qué premisas.
+Cada inferencia registra qué regla se aplicó y con qué premisas, incluyendo el `RuleId` completo.
 
-### Confidence scoring
+### Confidence y EvidenceStrength
 
 ```
 confidence = baseWeight × premiseCountRatio × recencyFactor × specificityFactor
@@ -183,6 +211,18 @@ premiseCountRatio: cuántas premisas de las necesarias están presentes
 recencyFactor: qué tan recientes son las premisas
 specificityFactor: qué tan específica es la coincidencia
 ```
+
+`EvidenceStrength` se computa separadamente como la solidez de la cadena causal:
+
+```
+evidenceStrength = premiseConfidenceMin × premiseCount / maxPremises
+
+premiseConfidenceMin: la confianza más baja entre las premisas
+premiseCount: número de premisas presentes
+maxPremises: número máximo de premisas que la regla puede aceptar
+```
+
+En el baseline, ambos valores suelen coincidir. La distinción existe para que modelos futuros puedan reportar divergencia entre la confianza del algoritmo y la solidez causal documentada.
 
 ---
 
@@ -211,9 +251,13 @@ Reasoning no modifica:
 
 ### R-005 — Confidence honesty
 
-`Confidence` representa soporte interno basado en cantidad y calidad de premisas, no certeza ontológica. No puede exceder 1.0 ni ser negativa.
+`Confidence` representa soporte interno basado en cantidad y calidad de premisas, no certeza ontológica. No puede exceder 1.0 ni ser negativa. `EvidenceStrength` en el trace documenta la solidez causal independientemente de la confianza del algoritmo.
 
-### R-006 — Separation from Decision
+### R-006 — Goal may not alter validity
+
+La relevancia a un Goal activo puede afectar la **priorización** de inferencias, pero nunca la **confianza** de una inferencia. Una inferencia no es más verdadera porque sea útil para un objetivo.
+
+### R-007 — Separation from Decision
 
 Reasoning genera posibilidades. Decision selecciona acciones. Ninguna inferencia implica ejecución.
 
@@ -324,8 +368,11 @@ Memoria: Musgo denso asociado a fuentes de agua.
 ```
 Inference: Posible fuente de agua al este.
 Evidence: 3 premisas (Goal espacial, hecho, memoria).
-Confidence: > 0.5 (goal relevance bonus).
+Confidence: basada en soporte factual (premisas), no en el Goal.
+Prioridad: mayor que inferencias sin relevancia al Goal.
 ```
+
+El Goal **no altera la confianza** de la inferencia. Solo afecta su **posición en el orden de salida**. Esto mantiene la separación cognición/motivación: la verdad de una inferencia no depende de si es útil.
 
 ---
 
