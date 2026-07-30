@@ -64,10 +64,11 @@
 | AffectSystem (continuous vector) | M4 | Integration + purity tests | M5 |
 | GoalSystem (infrastructure) | M4 | Integration + auto-creation tests | M5 |
 | WorldModelSystem | M4 | Integration test | M5 |
+| MemoryRetrievalSystem | M4 | CONTRACT-MR, S-001–S-010, determinism, reemplazabilidad | M5: cross-sprint regressions |
 
 **Hypothesis**: WorldModel currently stores `EntityId` references. Per ADR-0006 (Self independence from ECS), long-term the WorldModel should represent `ObservedObject { Properties, Relationships, Confidence, LastSeen }` with EntityId as an internal resolution detail. Deferred post-Sprint 3B.
 
-**Gap**: LTM→WM retrieval (memory query/recall) not yet implemented. Required for Sprint 3B Reasoning.
+**Closed**: LTM→WM retrieval implemented via MemoryRetrievalSystem (Sprint 3B.1).
 
 ### Cognitive Model (Sprint 3B — Planned)
 
