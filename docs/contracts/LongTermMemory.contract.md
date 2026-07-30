@@ -1,5 +1,8 @@
 # Long-Term Memory — Formal Contract
 
+**ID**: CONTRACT-LTM
+**Status**: Active
+
 ## Inputs
 - `WorkingMemoryContent` (for consolidation)
 - `AffectSnapshot` (associated with content being consolidated)

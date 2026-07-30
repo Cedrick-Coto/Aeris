@@ -1,5 +1,8 @@
 # Affect — Formal Contract
 
+**ID**: CONTRACT-AFFECT
+**Status**: Active
+
 ## Inputs
 - `Percept[]` (attended)
 - `WorkingMemoryContent`

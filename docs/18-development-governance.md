@@ -1,16 +1,38 @@
 # 18. Development Governance
 
-**Versión**: 0.1  
+**Versión**: 0.2  
 **Estado**: Activo  
 **Última actualización**: 2026-07-30  
 
 ---
 
-## 1. Fundamental Rule
+## 1. Fundamental Rules
+
+### 1.1 Admission Gate
 
 > **Ningún código introduce un concepto arquitectónico nuevo sin completar las cuatro capas previas.**
 
 No se incorporan subsistemas, mecanismos o conceptos por plausibilidad teórica, relevancia literaria o intuición. Se incorporan cuando existe una cadena de evidencia completa desde la literatura hasta el contrato computacional.
+
+### 1.2 Coherence Rule
+
+Antes de aceptar cualquier cambio —código, contrato, modelo, hipótesis, escenario— responder obligatoriamente estas cinco preguntas:
+
+| # | Pregunta | Si la respuesta es "no"... |
+|---|----------|----------------------------|
+| 1 | ¿Existe un contrato que defina este subsistema? | No se implementa. |
+| 2 | ¿Existe al menos un escenario de validación? | No se implementa. |
+| 3 | ¿La hipótesis está identificada o explícitamente descartada? | No se implementa. |
+| 4 | ¿El cambio preserva todos los invariantes del motor? | No se implementa. |
+| 5 | ¿Existe una estrategia para clasificar un posible fallo? | No se implementa. |
+
+No es una regla técnica; es una regla de gobierno del proyecto. Su función es evitar que la presión por avanzar erosione la arquitectura por conveniencia.
+
+### 1.3 Historical Compatibility
+
+> **Un experimento nunca cambia; se vuelve a ejecutar sobre nuevas versiones.**
+
+Los informes `docs/experiments/EXP-NNNN.md` son registros históricos inmutables. Si es necesario repetir un experimento, se genera una nueva ejecución asociada al mismo diseño experimental, no se reescribe el experimento original. Esto permite comparar resultados entre versiones del motor y del modelo con precisión sobre qué cambió y por qué.
 
 ---
 
@@ -127,7 +149,65 @@ System
 └── Why: qué regla o criterio motivó la transición
 ```
 
-### 3.5 When an Architectural Decision Fails
+### 3.5 Coste de cambio por capa
+
+Las modificaciones tienen un coste creciente según la capa que afectan:
+
+| Artefacto | Coste | Justificación |
+|-----------|-------|---------------|
+| Tests | Muy bajo | Sólo verificación, no cambian el sistema |
+| Implementación | Bajo | Refleja el contrato, cambia con frecuencia |
+| Escenarios | Bajo–medio | Especificación de comportamiento observable |
+| Contratos | Medio | Afectan a todos los modelos que los implementan |
+| Modelo (ACMA) | Alto | Cambia supuestos del modelo cognitivo |
+| Hipótesis | Alto | Cuestiona el fundamento teórico |
+| ADR | Muy alto | Invierte una decisión arquitectónica previa |
+
+Esto no impide cambios, pero fuerza que cada modificación declare explícitamente qué capa toca.
+
+### 3.6 Versionado de experimentos
+
+Todo experimento (`docs/experiments/EXP-NNNN.md`) debe referenciar:
+
+```yaml
+Engine version:     git commit o tag
+Contracts version:  CONTRACT-XX (ID + Status)
+Model version:      ACMA-v1.2 (o la instancia usada)
+```
+
+Esto permite reproducir cualquier resultado en el futuro.
+
+### 3.7 Estabilidad de contratos
+
+Los contratos evolucionan más lentamente que los modelos:
+
+```
+CONTRACT 1.0
+    ↓
+ACMA-v1, ACMA-v2, MinimalAgent, ReactiveAgent
+    ↓
+Todos compatibles con CONTRACT 1.0
+```
+
+Solo cuando un contrato limite la investigación se crea `CONTRACT 2.0`. Los contratos son el punto de estabilidad del ecosistema; cambiarlos rompe todos los modelos que los implementan.
+
+### 3.8 Clasificación de fallos
+
+Cuando un experimento no produce el resultado esperado, el informe debe clasificar la causa:
+
+```yaml
+Failure Source (seleccionar una):
+  □ Bug de implementación
+  □ Contrato incompleto
+  □ Modelo incorrecto
+  □ Hipótesis no apoyada
+  □ Escenario insuficiente
+  □ Evidencia insuficiente
+```
+
+Esto evita atribuir automáticamente un mal resultado al modelo cognitivo cuando el problema puede ser un error de código o un contrato mal definido.
+
+### 3.9 When an Architectural Decision Fails
 
 1. Documentar la evidencia del fallo
 2. Crear ADR nueva (no editar la existente)
@@ -150,10 +230,27 @@ System
 | `docs/hypotheses/` | Active research hypotheses |
 | `docs/contracts/` | Formal subsystem contracts |
 | `models/` | Cognitive model registry |
+| `docs/experiments/` | Experimental evidence |
+| `docs/validation-scenarios/` | Behavior specifications |
 
 ---
 
-## 5. Exceptions
+## 5. Fases del proyecto
+
+El proyecto ha evolucionado a través de cuatro fases:
+
+| Fase | Nombre | Activo principal |
+|------|--------|------------------|
+| 1 | Motor ECS | Engine determinista, ECS, persistencia |
+| 2 | Motor cognitivo | Infraestructura cognitiva (Perception, Attention, Memory, Affect, Goals) |
+| 3 | Plataforma de modelos cognitivos | Contratos + `models/` + múltiples instancias intercambiables |
+| 4 (potencial) | Plataforma experimental | Experimentos reproducibles, comparación entre modelos, evidencia acumulada |
+
+El activo principal del proyecto ya no es solo el código del agente. Es el **ecosistema completo de contratos, modelos, experimentos y evidencia reproducible**.
+
+---
+
+## 6. Exceptions
 
 La única excepción a la Admission Gate es:
 

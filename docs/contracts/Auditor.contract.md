@@ -1,5 +1,8 @@
 # Auditor — Formal Contract
 
+**ID**: CONTRACT-AUDITOR
+**Status**: Draft
+
 ## Inputs
 - Selected Action
 - Inferences from current tick

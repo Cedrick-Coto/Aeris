@@ -1,5 +1,8 @@
 # Decision — Formal Contract
 
+**ID**: CONTRACT-DECISION
+**Status**: Draft
+
 ## Inputs
 - `Plan` (from PlanningSystem)
 - `AffectState`

@@ -1,9 +1,9 @@
 # ACMA v1 — Cognitive Model
 
 **Estado**: Planned  
-**Versión**: 1.0  
+**Versión**: 1.1  
 **Última actualización**: 2026-07-30  
-**Sprint destino**: 3B  
+**Sprint destino**: 3B (7 micro-sprints)  
 
 ---
 
@@ -108,15 +108,23 @@ ACMA v1 no define ni modifica:
 | Time System | Infraestructura (Sprint 1) |
 | Persistence | Infraestructura (Sprint 1) |
 | Semantic Extractor | Sprint 2 |
+| PerceptionSystem | Sprint 3A |
+| AttentionSystem | Sprint 3A |
+| WorkingMemorySystem | Sprint 3A |
+| LongTermMemorySystem | Sprint 3A |
+| AffectSystem (continuous vector) | Sprint 3A |
+| GoalSystem (infraestructura) | Sprint 3A |
+| WorldModelSystem | Sprint 3A |
+| MemoryRetrievalSystem | Sprint 3B.1 |
+| ReasoningSystem | Sprint 3B.2 |
+| PlanningSystem | Sprint 3B.3 |
+| DecisionSystem | Sprint 3B.4 |
+| AuditorSystem | Sprint 3B.5 |
+| IdentityReconstructionSystem | Sprint 3B.6 |
+| SelfSnapshot | Sprint 3B.7 |
 | LLM Integration | Sprint 4 |
 | Narrative Pipeline | Sprint 5 |
 | Pokémon World | Sprint 6 |
-| PerceptionSystem (infraestructura) | Sprint 3A |
-| AttentionSystem (infraestructura) | Sprint 3A |
-| WorkingMemorySystem (infraestructura) | Sprint 3A |
-| LongTermMemorySystem (infraestructura) | Sprint 3A |
-| AffectSystem (esqueleto) | Sprint 3A |
-| GoalSystem (esqueleto) | Sprint 3A |
 
 ---
 

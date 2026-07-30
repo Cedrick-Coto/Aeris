@@ -1,5 +1,8 @@
 # Planning — Formal Contract
 
+**ID**: CONTRACT-PLANNING
+**Status**: Draft
+
 ## Inputs
 - `ActiveGoal` (highest priority)
 - `WorldModel`

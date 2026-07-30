@@ -1,5 +1,8 @@
 # Goals — Formal Contract
 
+**ID**: CONTRACT-GOALS
+**Status**: Active
+
 ## Inputs
 - `AffectState`
 - Inferences (from Reasoning)

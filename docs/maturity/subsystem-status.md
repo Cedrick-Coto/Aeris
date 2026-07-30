@@ -53,28 +53,33 @@
 | FactNormalizer | M3 | S2 | Tests | M4 |
 | SemanticValidator | M3 | S2 | Tests | M4 |
 
-### Cognitive Infrastructure (Sprint 3A — Planned)
+### Cognitive Infrastructure (Sprint 3A)
 
-| Subsystem | Level | Evidence | Blocked by |
-|-----------|-------|----------|------------|
-| PerceptionSystem | M1 | doc-17 §3.1 | Sprint 3A |
-| AttentionSystem | M1 | doc-17 §3.2 | Sprint 3A |
-| WorkingMemorySystem | M1 | doc-17 §3.4 | Sprint 3A |
-| LongTermMemorySystem | M1 | doc-17 §3.5 | Sprint 3A |
-| AffectSystem (esqueleto) | M1 | doc-17 §3.3 | Sprint 3A |
-| GoalSystem | M1 | doc-17 §3.8 | Sprint 3A |
+| Subsystem | Level | Evidence | Next |
+|-----------|-------|----------|------|
+| PerceptionSystem | M4 | Integration + determinism tests | M5 |
+| AttentionSystem | M4 | Integration + determinism tests | M5 |
+| WorkingMemorySystem | M4 | Integration + determinism tests | M5 |
+| LongTermMemorySystem | M4 | Integration test | M5 |
+| AffectSystem (continuous vector) | M4 | Integration + purity tests | M5 |
+| GoalSystem (infrastructure) | M4 | Integration + auto-creation tests | M5 |
+| WorldModelSystem | M4 | Integration test | M5 |
+
+**Hypothesis**: WorldModel currently stores `EntityId` references. Per ADR-0006 (Self independence from ECS), long-term the WorldModel should represent `ObservedObject { Properties, Relationships, Confidence, LastSeen }` with EntityId as an internal resolution detail. Deferred post-Sprint 3B.
+
+**Gap**: LTM→WM retrieval (memory query/recall) not yet implemented. Required for Sprint 3B Reasoning.
 
 ### Cognitive Model (Sprint 3B — Planned)
 
 | Subsystem | Level | Evidence | Blocked by |
 |-----------|-------|----------|------------|
-| ACMA v1 AffectModel | M0 | ACMA-v1.md | Sprint 3B |
-| ACMA v1 Reasoning | M0 | ACMA-v1.md | Sprint 3B |
-| ACMA v1 Planning | M0 | ACMA-v1.md | Sprint 3B |
-| ACMA v1 Decision | M0 | ACMA-v1.md | Sprint 3B |
-| ACMA v1 WorldModel | M0 | ACMA-v1.md | Sprint 3B |
-| ACMA v1 IdentityReconstruction | M0 | ACMA-v1.md | Sprint 3B |
-| ACMA v1 Auditor | M0 | ACMA-v1.md | Sprint 3B |
+| ACMA v1 Reasoning | M0 | ACMA-v1.md | Sprint 3B.1 |
+| ACMA v1 Planning | M0 | ACMA-v1.md | Sprint 3B.2 |
+| ACMA v1 Decision | M0 | ACMA-v1.md | Sprint 3B.3 |
+| ACMA v1 Auditor | M0 | ACMA-v1.md | Sprint 3B.4 |
+| ACMA v1 IdentityReconstruction | M0 | ACMA-v1.md | Sprint 3B.5 |
+| ACMA v1 SelfSnapshot | M0 | — | Sprint 3B.6 |
+| ACMA v1 AffectModel | M0 | ACMA-v1.md | Sprint 3B (merged with Goal) |
 
 ### Observability (Sprint 3C — Planned)
 
@@ -100,8 +105,8 @@
 | Engine Core | 0 | 0 | 0 | 0 | 8 | 0 |
 | Cognitive Layer | 0 | 0 | 0 | 7 | 0 | 0 |
 | Semantic Layer | 0 | 0 | 0 | 2 | 2 | 0 |
-| Cognitive Infrastructure | 0 | 6 | 0 | 0 | 0 | 0 |
-| Cognitive Model | 7 | 0 | 0 | 0 | 0 | 0 |
+| Cognitive Infrastructure | 0 | 0 | 0 | 0 | 7 | 0 |
+| Cognitive Model | 6 | 0 | 0 | 0 | 0 | 0 |
 | Observability | 3 | 0 | 0 | 0 | 0 | 0 |
 | LLM & Narrative | 2 | 0 | 0 | 0 | 0 | 0 |
-| **Total** | **12** | **6** | **0** | **9** | **10** | **0** |
+| **Total** | **11** | **0** | **0** | **9** | **17** | **0** |

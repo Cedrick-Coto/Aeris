@@ -1,5 +1,8 @@
 # World Model — Formal Contract
 
+**ID**: CONTRACT-WORLDMODEL
+**Status**: Active
+
 ## Inputs
 - `Percept[]` (attended, historical)
 - Inferences (from Reasoning)

@@ -37,6 +37,13 @@ public sealed class Engine
             _world.AddResource(new RelationshipStore());
         if (!_world.HasResource<AttentionStore>())
             _world.AddResource(new AttentionStore());
+
+        if (!_world.HasResource<CognitiveTraceLog>())
+            _world.AddResource(new CognitiveTraceLog());
+        if (!_world.HasResource<WorkingMemoryStore>())
+            _world.AddResource(new WorkingMemoryStore());
+        if (!_world.HasResource<WorldModelState>())
+            _world.AddResource(new WorldModelState());
     }
 
     public void SetPersistence(JsonPersistence persistence)

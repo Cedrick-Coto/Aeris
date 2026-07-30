@@ -1,5 +1,8 @@
 # Attention — Formal Contract
 
+**ID**: CONTRACT-ATTENTION
+**Status**: Active
+
 ## Inputs
 - `Percept[]` (from PerceptionSystem)
 - `AffectState` (from previous tick, or baselines if tick 1)

@@ -1,8 +1,8 @@
 # 17. Computational Agent Model
 
-**Versión**: 0.3  
-**Estado**: Borrador  
-**Última actualización**: 2026-07-29
+**Versión**: 0.4  
+**Estado**: Activo  
+**Última actualización**: 2026-07-30
 
 ---
 
@@ -58,6 +58,33 @@ Esta clasificación no cambia el código. Documenta **qué parte del sistema int
 
 ACMA es un **módulo intercambiable**. El motor cognitivo no sabe qué teoría del agente está ejecutando. ACMA v1, v2, v3, etc. son experimentos sobre la misma infraestructura. El contrato entre ACMA y el resto del sistema está definido por las interfaces de este documento.
 
+### Four-layer architecture
+
+The project has evolved into four distinct layers:
+
+```
+┌─────────────────────────────────────────┐
+│  Infrastructure                          │
+│  ECS, Engine, Persistence, Scheduler     │
+│  Sprint 1-2, independent of cognition    │
+├─────────────────────────────────────────┤
+│  Cognitive Contracts                     │
+│  Formal interfaces between subsystems    │
+│  doc-17, docs/contracts/*                │
+├─────────────────────────────────────────┤
+│  Cognitive Model                         │
+│  ACMA v1 (or future variants)            │
+│  models/ACMA-v1.md                       │
+├─────────────────────────────────────────┤
+│  Experiments                             │
+│  Hypotheses, scenarios, metrics,         │
+│  validation against contracts            │
+│  docs/hypotheses/, docs/validation-*/    │
+└─────────────────────────────────────────┘
+```
+
+Each layer depends only on the layer below. A new Cognitive Model (e.g. ACMA v2) can replace v1 without touching Infrastructure or Contracts, provided it respects the same interfaces.
+
 ---
 
 ## 2. Causal Chain (cadena causal completa)
@@ -77,13 +104,17 @@ Working Memory (actualización)
     │ Entrada: AttendedPercept[], inferencias del tick anterior
     │ Salida: WorkingMemoryContent
     ▼
+Memory Retrieval
+    │ Entrada: LongTermMemory, WorkingMemoryContent, AffectState
+    │ Salida: RetrievedMemory[] → WorkingMemory
+    ▼
 Affect Update
     │ Entrada: Percept[], WorkingMemoryContent, Goals, baselines
     │ Salida: AffectState (nuevo)
     ▼
 Reasoning
-    │ Entrada: WorkingMemoryContent, AffectState, LongTermMemory, WorldModel
-    │ Salida: Inferencias, BeliefChanges
+    │ Entrada: WorkingMemoryContent, WorldModel, Goals, AffectState
+    │ Salida: Inferencias, Predictions, CandidateActions
     ▼
 Goal Selection
     │ Entrada: AffectState, Inferencias, AutobiographicalMemory
@@ -120,6 +151,24 @@ Identity Reconstruction
 - Ningún sistema puede leer la salida de otro sistema en el mismo tick si ese otro sistema aparece después en la cadena.
 - Todos los sistemas se ejecutan en orden. No hay loops intra-tick.
 - La cadena causal es la misma para toda versión de ACMA. ACMA puede cambiar la implementación interna de cada sistema, pero no el orden ni las interfaces.
+
+### CausalTrace (transversal)
+
+CausalTrace (CONTRACT-CT) no pertenece a la cadena causal. Es un observador pasivo:
+
+```
+Cada subsistema
+    │
+    ├────► Siguiente subsistema en la cadena
+    │
+    └────► CausalTrace (solo observa, nunca escribe)
+```
+
+- Se ejecuta después de todos los sistemas del tick.
+- Recopila la salida de cada subsistema.
+- Produce `CausalRecord[]` ordenado por ejecución.
+- Nunca modifica el World.
+- Deshabilitarlo no altera la simulación.
 
 ---
 
@@ -794,6 +843,9 @@ Regla: el LLM nunca ve:
 | 7 | Toda acción es un evento en el EventBus | Test de salida |
 | 8 | El sistema completo es determinista (misma seed, mismas entradas → mismo SelfSnapshot) | Determinism check |
 | 9 | ACMA puede reemplazarse sin cambiar el motor | Test de interfaz |
+| 10 | Ningún subsistema reinterpreta retrospectivamente la salida de subsistemas anteriores: cada etapa transforma información sin corregir o modificar la salida de etapas previas en el mismo tick | Test de integración |
+| 11 | CausalTrace observa sin intervenir: desactivar la traza no altera el resultado del tick | Test de integración |
+| 12 | Justificación separada de Decisión: DecisionSystem produce `Action`, Justification produce `CausalRecord` como artefacto independiente | Revisión de código |
 
 ---
 
@@ -826,3 +878,110 @@ Regla: el LLM nunca ve:
 | 17.4 Contrato computacional | Todas las interfaces están definidas en este documento |
 | 17.5 Localidad causal | Cada sistema declara exactamente qué escribe |
 | 17.6 Modulación afectiva | AffectState modula pesos/umbrales, no selecciona respuestas |
+| 17.7 Observabilidad sin intervención | CausalTrace (CONTRACT-CT) registra toda la cadena causal sin modificar la simulación. Deshabilitar la traza no altera el resultado del tick. |
+
+---
+
+## 9. Ciclo de validación
+
+La validación no termina en los tests. Cierra el ciclo hacia la hipótesis. Los resultados experimentales se registran en `docs/experiments/EXP-NNNN.md` y realimentan el grafo de conocimiento:
+
+```
+Research Note
+    ↓
+Hypothesis
+    ↓
+Model Assumption
+    ↓
+Contract
+    ↓
+Scenario
+    ↓
+Implementation
+    ↓
+Test                    ← fin del ciclo de ingeniería
+    ↓
+Experiment              ← fin del ciclo científico
+    ↓
+Evidence               (docs/experiments/EXP-NNNN.md)
+    ↓
+├──► Hypothesis (status updated: Validated / Weak support / Inconclusive / Contradicts)
+├──► Model (modified)
+└──► ADR (if architectural change)
+```
+
+### Experimentos de ingeniería
+
+Validan que un subsistema cumple su contrato.
+
+```
+MemoryRetrieval
+    ↓
+S-001: recupera recuerdos correctos
+    ↓
+PASS / FAIL
+```
+
+### Experimentos científicos
+
+Validan hipótesis del modelo cognitivo.
+
+```
+H-0002: atención dinámica por CognitiveLoad
+    ↓
+Comparar:
+    CognitiveLoad = 0.2 → budget atencional = 7
+    CognitiveLoad = 0.8 → budget atencional = 3
+    ↓
+¿La conducta cambia como predice el modelo?
+    ↓
+EXP-0002 (registrado en docs/experiments/)
+    ↓
+H-0002 Status: Supports / Weak support / Inconclusive / Contradicts
+```
+
+## 11. Tres dimensiones del proyecto
+
+Aeris opera simultáneamente en tres dimensiones independientes:
+
+| Dimensión | Propósito | Artefactos |
+|-----------|-----------|------------|
+| **Ingeniería** | Motor determinista, eficiente, mantenible | Engine, ECS, tests, benchmarks |
+| **Modelado cognitivo** | Instancias de modelos que respetan contratos | `models/`, parámetros, pesos |
+| **Investigación** | Evaluación experimental de hipótesis | `docs/experiments/`, evidence, hypothesis status |
+
+Cada dimensión tiene su propio ciclo de vida. Un cambio en la investigación puede modificar el modelo, pero no el motor sin un ADR. Un cambio en ingeniería no invalida automáticamente una hipótesis. Esta separación evita que problemas de una dimensión se solucionen cambiando otra por conveniencia.
+
+## 10. ACMA como familia de modelos
+
+`models/` alberga múltiples modelos cognitivos que comparten los mismos contratos:
+
+```
+models/
+├── ACMA-v1.md           ← Primer modelo experimental
+├── ACMA-v2.md           ← Futura iteración
+├── MinimalAgent.md      ← Implementación mínima (baseline)
+├── ReactiveAgent.md     ← Solo percepción → acción, sin razonamiento
+├── DevelopmentalAgent.md← Modelo con aprendizaje ontogenético
+└── experimental/        ← Drafts, propuestas, variantes
+```
+
+Todos ejecutan contra la misma infraestructura:
+
+```
+Scenario S-031
+    ↓
+ACMA-v1 → Resultado A
+ACMA-v2 → Resultado B
+MinimalAgent → Resultado C
+    ↓
+Comparación sin tocar el motor
+```
+
+### Terminología
+
+A partir de este punto, el proyecto se refiere a:
+
+> **Una instancia de un modelo cognitivo** (no "el modelo")
+
+ACMA v1 no es "la" arquitectura correcta. Es una implementación concreta de los contratos, sujeta a validación experimental. Sus resultados decidirán si se mantiene, modifica, reemplaza parcialmente o descarta.

@@ -1,5 +1,8 @@
 # Working Memory — Formal Contract
 
+**ID**: CONTRACT-WM
+**Status**: Active
+
 ## Inputs
 - `Percept[]` attended (from AttentionSystem)
 - `AffectState`

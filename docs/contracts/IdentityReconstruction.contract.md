@@ -1,5 +1,8 @@
 # Identity Reconstruction — Formal Contract
 
+**ID**: CONTRACT-IDENTITY
+**Status**: Draft
+
 ## Inputs
 - `AutobiographicalMemory` (significant episodes)
 - `LongTermMemory` (beliefs, principles)

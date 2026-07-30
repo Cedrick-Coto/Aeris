@@ -1,5 +1,8 @@
 # Perception — Formal Contract
 
+**ID**: CONTRACT-PERCEPTION
+**Status**: Active
+
 ## Inputs
 - World (ECS): entities, components, spatial relationships
 - EventBus: events from current tick
