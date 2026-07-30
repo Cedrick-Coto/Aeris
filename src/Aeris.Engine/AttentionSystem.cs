@@ -8,6 +8,8 @@ public sealed class AttentionSystem : ISystem
 
     public int AttentionBudget { get; set; } = 5;
 
+    public IAttentionStrategy Strategy { get; set; } = new SalienceAttentionStrategy();
+
     public void Execute(World world, float deltaTime)
     {
         var time = world.GetResource<TimeResource>();
@@ -21,24 +23,16 @@ public sealed class AttentionSystem : ISystem
         }
 
         var allPercepts = world.GetResource<PerceptBatch>();
-        var attended = new List<Percept>();
         int budget = CalculateBudget(affect);
 
-        for (int i = 0; i < allPercepts.Percepts.Count; i++)
+        var context = new AttentionContext
         {
-            var p = allPercepts.Percepts[i];
-            float noveltyMod = 1f + affect.Novelty * 0.5f;
-            float threatMod = p.Type == PerceptType.Aura ? affect.Threat * 0.3f : 0f;
-            p.Salience = noveltyMod + threatMod + p.Confidence;
-            allPercepts.Percepts[i] = p;
-        }
+            Percepts = allPercepts.Percepts,
+            Affect = affect,
+            Budget = budget
+        };
 
-        allPercepts.Percepts.Sort((a, b) => b.Salience.CompareTo(a.Salience));
-
-        for (int i = 0; i < Math.Min(budget, allPercepts.Percepts.Count); i++)
-        {
-            attended.Add(allPercepts.Percepts[i]);
-        }
+        var attended = Strategy.Select(context);
 
         if (world.HasResource<AttendedPercepts>())
         {
@@ -54,7 +48,9 @@ public sealed class AttentionSystem : ISystem
         if (world.HasResource<CognitiveTraceLog>())
         {
             var trace = world.GetResource<CognitiveTraceLog>();
-            trace.Record(Name, $"{allPercepts.Percepts.Count} raw, budget={budget}", $"{attended.Count} attended", $"Salience filter with affect modulation (arousal={affect.Curiosity:F2})");
+            trace.Record(Name, $"{allPercepts.Percepts.Count} raw, budget={budget}",
+                $"{attended.Count} attended",
+                $"Strategy={Strategy.Name} (arousal={affect.Curiosity:F2})");
         }
     }
 
