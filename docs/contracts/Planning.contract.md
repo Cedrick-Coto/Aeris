@@ -2,7 +2,7 @@
 
 **Estado**: Draft  
 **Última actualización**: 2026-07-30  
-**Versión**: 0.1  
+**Versión**: 0.2  
 
 ---
 
@@ -140,20 +140,22 @@ Plan:
 
 ---
 
-## 5. Baseline algorithm: GoalDirectedPlanning
+## 5. Baseline algorithm: Goal decomposition planning
 
-Proceso secuencial:
+Evitar empezar con planificación compleja. Proceso secuencial:
 
 ```
-IdentifyGoalCandidates
+Active Goal
     ↓
-RetrieveRelevantKnowledge
+Find possible actions
     ↓
-GenerateStepSequences
+Generate candidate sequences
     ↓
-ScorePlans
+Estimate outcome
     ↓
-EmitCandidatePlans
+Score candidates (viabilidad + preferencia separadas)
+    ↓
+Return ranked plans
 ```
 
 ### Reglas de generación baseline
@@ -165,16 +167,19 @@ EmitCandidatePlans
 | `gather-resource` | Goal + recurso necesario conocido | Plan: obtener recurso → usar recurso |
 | `defer-goal` | Goal + riesgo alto o recursos insuficientes | Plan: diferir (esperar mejor condición) |
 
-### Scoring
+### Scoring — viabilidad y preferencia separadas
 
 ```
-planScore = goalPriority × 0.4 + confidence × 0.3 + (1 - risk) × 0.2 + (1 - cost) × 0.1
+viability = confidence × 0.6 + (1 - risk) × 0.4
+preference = goalPriority × 0.5 + affectModulation × 0.3 + costEfficiency × 0.2
 
-goalPriority: prioridad del objetivo al que responde
-confidence: qué tan probable es que el plan funcione
-risk: qué tan costoso es el fracaso
-cost: recursos estimados para ejecutar
+planScore = viability × 0.7 + preference × 0.3
 ```
+
+La **viabilidad** responde a: ¿puede este plan lograr el objetivo?
+La **preferencia** responde a: ¿qué tan deseable es este plan?
+
+El afecto puede modular preferencia (prioridad, exploración, coste percibido), pero nunca la viabilidad ni la causalidad del mundo.
 
 ---
 
@@ -201,11 +206,15 @@ Planning no modifica:
 - Affect;
 - InferenceStore.
 
-### P-005 — Cost honesty
+### P-005 — No hidden objectives
+
+Planning no puede crear nuevos objetivos. Solo responde a `GoalId` existentes. La creación de objetivos pertenece a GoalSystem.
+
+### P-006 — Cost honesty
 
 `Cost` y `Risk` reflejan estimaciones internas basadas en información disponible, no valores arbitrarios. Deben poder reconstruirse desde la evidencia.
 
-### P-006 — Separation from Decision
+### P-007 — Separation from Decision
 
 Planning genera `CandidatePlan[]`. Decision selecciona uno. Ningún plan implica ejecución automática.
 
@@ -289,36 +298,62 @@ Plan: [Defer] o [Wait]
 Risk: alto
 ```
 
-### S-P004 — Múltiples planes candidatos
+### S-P004 — Affect modulation
 
-Un mismo Goal puede generar múltiples planes alternativos. Planning no elige.
+**Entrada**: Mismo mundo, mismo Goal, diferente AffectState (alta curiosidad vs. alto estrés).
 
-### S-P005 — Reemplazabilidad
+**Salida esperada**: Diferente ranking de planes (preferencia), misma viabilidad (causalidad física no alterada). El afecto cambia prioridad relativa, no verdad del plan.
 
-Cambiar `IPlanningStrategy` sin modificar `PlanningSystem`.
+### S-P005 — No goal creation
 
-### S-P006 — Determinismo
+**Entrada**: Sin objetivos activos (`GoalState` vacío).
+
+**Salida esperada**: `PlanCandidate[]` vacío. No se crea un "objetivo de exploración" implícito. Eso pertenece a GoalSystem.
+
+### S-P006 — Múltiples candidatos sin selección
+
+**Entrada**: Goal alcanzable por dos caminos (corto/riesgoso vs. largo/seguro).
+
+**Salida esperada**: Dos `CandidatePlan[]`. Ninguno seleccionado. Planning no elige.
+
+### S-P007 — Goal imposible
+
+**Entrada**:
+```
+Goal: Llegar a la montaña
+WorldModel: sin camino conocido, sin inferencia de ruta
+```
+
+**Salida esperada**: `CandidatePlan[]` vacío. No se genera un plan inviable.
+
+### S-P008 — Determinismo
 
 Dos ejecuciones con mismo contexto producen mismos planes (mismo orden, mismos scores).
 
-### S-P007 — Sin side effects
+### S-P009 — Sin side effects
 
 Ejecutar Planning no altera Goals, Memory, WorldModel, Affect ni InferenceStore.
+
+### S-P010 — Reemplazabilidad
+
+Cambiar `IPlanningStrategy` sin modificar `PlanningSystem`.
 
 ---
 
 ## 9. Criterio de éxito de 3B.3
 
-No es "Aeris planea".
+No es:
 
-Es:
+> "Aeris sabe qué hacer."
 
-> Existe un mecanismo de planificación artificial capaz de producir cursos de acción estructurados a partir de inferencias y objetivos, con trazabilidad completa y sin ejecutar acciones.
+Sino:
+
+> Existe un mecanismo capaz de construir futuros hipotéticos explicables a partir del estado interno, manteniendo separación entre imaginación (Planning), evaluación (scoring) y acción (Decision).
 
 ### Métricas mínimas
 
 - Build: 0 errores, 0 warnings.
-- Tests: 100% pass (S-P001–S-P007 + determinismo + side effects + reemplazabilidad).
+- Tests: 100% pass (S-P001–S-P010).
 - Rendimiento: planificación < 10ms con 3 goals activos.
 - Cobertura baseline: al menos 4 reglas (direct-approach, explore-first, gather-resource, defer-goal).
 
@@ -337,3 +372,4 @@ Es:
 | Versión | Fecha | Cambio |
 |---------|-------|--------|
 | 0.1 | 2026-07-30 | Draft inicial |
+| 0.2 | 2026-07-30 | Scoring separa viabilidad/preferencia; P-005 (no hidden objectives); S-P004 affect modulation; S-P005 no goal creation; S-P006 múltiples candidatos; S-P007 goal imposible; S-P010 reemplazabilidad |
