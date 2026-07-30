@@ -2,7 +2,7 @@
 
 **Estado**: Draft  
 **Última actualización**: 2026-07-30  
-**Versión**: 0.1  
+**Versión**: 0.2  
 
 ---
 
@@ -80,13 +80,28 @@ DecisionContext
 
 ## 4. Outputs
 
+### DecisionStatus
+
+```csharp
+enum DecisionStatus
+{
+    Selected,        // Se eligió un plan viable
+    Deferred,        // Se difiere la decisión (p.ej. esperar más información)
+    NoViablePlan     // Ningún plan superó el umbral de viabilidad
+}
+```
+
+"No decidir también es un resultado válido". Decision nunca inventa un nuevo plan cuando no hay viables.
+
 ### DecisionResult
 
 ```csharp
 DecisionResult
 {
-    SelectedAction     Action;
-    DecisionEvidence[] Evidence;
+    DecisionStatus     Status;
+    uint?              SelectedPlanId;     // null si no se seleccionó plan
+    SelectedAction     Action;             // Puede ser "Defer" o nulo si no hay acción
+    SelectionEvidence  Evidence;
 }
 ```
 
@@ -98,18 +113,29 @@ DecisionResult
 | `Action` | string | Descriptor de la acción seleccionada |
 | `GoalId` | uint | Objetivo al que responde |
 | `Confidence` | float | Confianza en la selección [0, 1] |
-| `Reason` | string | Breve justificación de la selección |
 
-### DecisionEvidence
+### SelectionReason (trace estructurado)
+
+```csharp
+SelectionReason
+{
+    string              Policy;           // Nombre de la política usada
+    float               Threshold;        // Umbral de viabilidad aplicado
+    RejectedPlan[]      Rejected;         // Planes que no superaron el umbral
+    SelectedPlan        Selected;         // Plan seleccionado (si aplica)
+    string              TieBreaker;       // Criterio de desempate (si aplicó)
+}
+```
+
+### SelectionEvidence
 
 | Campo | Tipo | Descripción |
 |-------|------|-------------|
-| `PlanId` | uint | ID del plan seleccionado |
+| `Status` | DecisionStatus | Resultado de la decisión |
 | `CandidatesConsidered` | int | Número de candidatos evaluados |
 | `SelectionPolicy` | string | Nombre de la política usada |
-| `Feasibility` | float | Viabilidad del plan seleccionado |
-| `Preference` | float | Preferencia del plan seleccionado |
-| `Strategy` | string | Nombre de la estrategia |
+| `Threshold` | float | Umbral de viabilidad aplicado |
+| `Reason` | SelectionReason | Trazabilidad estructurada de la selección |
 | `ElapsedMicroseconds` | long | Tiempo de cómputo |
 
 ### Ejemplo
@@ -120,12 +146,27 @@ CandidatePlans:
   Plan B: [Explore → Search]     F:0.5 P:0.9
 
 SelectionPolicy: feasibilityThreshold
+Threshold: 0.65
+
+Rejected:
+  Plan B (feasibility 0.5 < 0.65)
 
 Selected:
-  Plan A (feasibility ≥ 0.7, highest preference among viable)
+  Plan A (feasibility 0.9, preference 0.4)
 
-Reason:
-  "Plan A is viable and preferred over defer alternatives"
+Status: Selected
+```
+
+Caso sin viables:
+
+```
+CandidatePlans:
+  Plan A: F:0.2 P:0.9
+  Plan B: F:0.1 P:0.8
+
+Status: NoViablePlan
+Action: Defer
+Reason: "No plan meets feasibility threshold 0.50"
 ```
 
 ---
@@ -251,7 +292,7 @@ Plan B: F:0.8 P:0.7
 
 **Salida esperada**: Plan B seleccionado (mayor preferencia entre igualmente viables).
 
-### S-D003 — Ningún plan viable produce Defer
+### S-D003 — Ningún plan viable produce NoViablePlan
 
 **Entrada**:
 ```
@@ -259,7 +300,7 @@ Plan A: F:0.2 P:0.9
 Plan B: F:0.1 P:0.8
 ```
 
-**Salida esperada**: `Action = "Defer"`, candidatesConsidered = 2.
+**Salida esperada**: `Status = NoViablePlan`, `Action = "Defer"`, candidatesConsidered = 2.
 
 ### S-D004 — Estrés relaja umbral
 
