@@ -188,33 +188,36 @@ docs/
 ├── 14-development-roadmap.md   ← Plan de desarrollo
 ├── 16-agent-architecture.md    ← Arquitectura del agente
 ├── 17-computational-agent-model.md ← Modelo computacional formal
+├── 18-development-governance.md ← Reglas de gobernanza del desarrollo
 ├── 99-glossary.md              ← Glosario de términos
 ├── adr/                        ← Architecture Decision Records
+├── contracts/                  ← Contratos formales de subsistemas
 ├── hypotheses/                 ← Hipótesis de investigación
+├── maturity/                   ← Matriz de madurez por subsistema
 └── research-notes/             ← Notas de literatura científica
-    ├── 0001-use-arch-ecs.md
-    ├── 0002-use-sqlite-json.md
-    ├── 0003-use-csharp.md
-    ├── 0004-llm-as-function.md
-    ├── 0005-semantic-state-as-transversal.md
-    ├── 0006-self-model-reconstructed.md
-    ├── 0007-target-net10.md
-    ├── 0008-affect-functional-not-human.md
-    ├── 0009-identity-is-emergent.md
-    └── 0010-perception-precedes-cognition.md
+
+models/                         ← Modelos cognitivos intercambiables
+├── ACMA-v1.md                  ← Primer modelo cognitivo experimental
+└── experimental/               ← Propuestas y borradores
 ```
 
 ## 9. Capas de Documentación
 
-El proyecto documenta en tres dimensiones:
+El proyecto documenta en cuatro dimensiones, más un plano de contratos y un registro de modelos:
 
 | Capa | Formato | Pregunta | Contenido |
 |------|---------|----------|-----------|
+| Gobernanza | `docs/18-development-governance.md` | ¿Cómo se toman las decisiones? | Pipeline de conocimiento, reglas de admisión |
 | Arquitectónica | ADR (`docs/adr/`) | ¿Cómo funciona? | Decisiones vigentes, alternativas, consecuencias |
 | Científica | Research Notes (`docs/research-notes/`) | ¿Por qué creemos que es razonable? | Literatura, evidencia, impacto potencial |
 | Experimental | Hypotheses (`docs/hypotheses/`) | ¿Qué sigue siendo incierto? | Hipótesis, experimentos, resultados |
+| Contratos | Contracts (`docs/contracts/`) | ¿Qué entra y sale de cada subsistema? | Inputs, outputs, invariantes, side effects prohibidos |
+| Modelos | Models (`models/`) | ¿Qué teoría cognitiva se ejecuta? | Modelos intercambiables (ACMA v1, v2, etc.) |
+| Madurez | Maturity (`docs/maturity/`) | ¿Qué tan maduro está cada subsistema? | Nivel M0-M5 por subsistema |
 
 Cada capa tiene un ciclo de vida distinto y no deben mezclarse. Una Research Note no implica una decisión arquitectónica; una Hypothesis no implica una ADR. La separación permite que el proyecto evolucione sin confundir especulación con decisión.
+
+El ciclo completo de admisión de un nuevo concepto sigue el pipeline definido en `docs/18-development-governance.md`:
 
 ---
 
