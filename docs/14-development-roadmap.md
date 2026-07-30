@@ -2,7 +2,7 @@
 
 **Versión**: 0.4  
 **Estado**: Activo  
-**Última actualización**: 2026-07-29
+**Última actualización**: 2026-07-30
 
 ---
 
@@ -24,10 +24,9 @@ El objetivo no es "hacer que Aeris piense como un humano", sino **construir una 
 
 ```
 Sprint 0 ──► Sprint 1 ──► Sprint 2 ──► Sprint 3A ──► Sprint 3B ──► Sprint 3C ──► Sprint 4 ──► Sprint 5 ──► Sprint 6 ──► Sprint 7
-Arquitec.    Motor ECS    Sem. Extr.   Infra.       ACMA v1      Observa-     LLM          Narrativa    Mundo Pok.   Aeris
-(FROZEN)     (COMPL.)     (Pend.)      Cognitiva    (Modelo      bilidad      (Verbaliz.)  (Pipeline)   (Modelado)   (Personaje)
-                                        (Sistemas    Experimental)
-                                        Generales)
+Arquitec.    Motor ECS    Sem. Extr.   Infra.       ACMA v1      Observa-      LLM          Narrativa    Mundo Pok.   Aeris
+(FROZEN)     (COMPL.)     (COMPL.)     Cognitiva    (En          bilidad       (Verbaliz.)  (Pipeline)   (Modelado)   (Personaje)
+                                        (COMPL.)    progreso)    (Planeado)    (Planeado)   (Planeado)   (Planeado)   (Planeado)
 ```
 
 ### Dependencias entre Sprints
@@ -429,115 +428,26 @@ PromptBuilder
 
 **Objetivo**: Construir los mecanismos generales sobre los que cualquier teoría cognitiva pueda implementarse. No existe todavía "Aeris". Existe únicamente la maquinaria.
 
-**Estado**: Pendiente.
+**Estado**: ✅ Completado (210 tests, 7 sistemas implementados)
 
 ### Naturaleza del Sprint
 
 El Sprint 3 se divide en dos capas para proteger la transición de riesgo **arquitectónico** (Sprints 0–2) a riesgo **científico** (Sprint 3B en adelante). La infraestructura cognitiva (3A) es puramente ingenieril: sistemas ECS deterministas con interfaces formales. El modelo experimental (3B) es científico: una hipótesis implementada.
 
-### Precondición
-
-Antes de iniciar 3A, debe existir el documento de especificación formal del modelo computacional del agente (`docs/17-computational-agent-model.md`), que define:
-- Variables de estado de cada subsistema
-- Entradas y salidas de cada sistema
-- Invariantes
-- Cadena causal completa desde percepción hasta acción
-- Qué información puede leer y modificar cada sistema
-
-### Sistemas
-
-Todos implementados como **sistemas ECS deterministas** sin contenido de "personalidad" ni teoría cognitiva específica.
+### Sistemas implementados (7)
 
 ```
-PerceptionSystem
-├── Traduce eventos del mundo a Percept[] estructurados
-├── Sin interpretación semántica (solo filtrado sensorial)
-├── Incertidumbre como confidence float [0, 1]
-└── Salida: Percept[]
-
-AttentionSystem
-├── Presupuesto computacional fijo por tick
-├── Filtra Percept[] por saliencia
-├── Modulado por AffectState (arousal, novelty, threat)
-└── Salida: Percept[] (atendidos)
-
-WorkingMemorySystem
-├── Capacidad limitada (N chunks, configurable)
-├── Decaimiento y refresco por re-atención
-└── Salida: WorkingMemoryContent
-
-LongTermMemorySystem
-├── Episódica, semántica, procedimental
-├── Consolidación, olvido, reinterpretación
-└── Salida: Recuerdos recuperados vía query
-
-AffectSystem
-├── Vector continuo (no etiquetas discretas)
-├── Dimensiones: Curiosity, Stress, Confidence, Trust,
-│   Novelty, Attachment, Threat, RewardExpectation,
-│   CognitiveLoad
-├── Homeostasis: cada variable tiende a valor basal
-└── Salida: AffectState (modula otros subsistemas)
-
-GoalSystem
-├── Activar, suspender, priorizar objetivos
-├── Goals con tipo, prioridad, progreso, subgoals
-└── Salida: ActiveGoal[]
-
-ReasoningSystem
-├── Inferencia causal, deductiva, abductiva, analógica
-├── Modulado por AffectState
-├── Sin simulación mental (será en 3B)
-└── Salida: Inference[], BeliefChange[]
-
-PlanningSystem
-├── Generar, evaluar, seleccionar planes
-├── Evaluación sobre WorldModel interno
-└── Salida: Plan
-
-DecisionSystem
-├── Seleccionar próxima acción desde el plan
-├── Emitir Action como evento del EventBus
-└── Salida: Action
-
-AuditorSystem
-├── Observa razonamiento, detecta conflictos
-├── Sin modificar estado (solo reporta)
-└── Salida: ConflictReport[], Correction[]
-
-IdentityReconstructionSystem
-├── Construye SelfSnapshot desde cero cada tick
-├── Entradas: memoria autobiográfica, goals, afecto, relaciones
-├── SelfSnapshot existe solo durante el tick
-└── No hay un componente «Self» en el ECS
+PerceptionSystem       → Traduce eventos del mundo a Percept[]
+AttentionSystem        → Filtro por saliencia con presupuesto fijo
+WorkingMemorySystem    → Capacidad limitada con decaimiento
+LongTermMemorySystem   → Consolidación, olvido, query
+AffectSystem           → Vector continuo 9-D con homeostasis
+GoalSystem             → Activación, suspensión, priorización
+WorldModelSystem       → Mapa interno con entidades observadas
 ```
-
-### Entregables
-- Los 11 sistemas implementados como Systems ECS
-- `SelfSnapshot` como struct inmutable (no componente persistente)
-- `AffectState` como vector continuo con homeostasis
-- Interfaces formales para cada sistema (según doc-17)
-- Tests unitarios para cada sistema
-- Test de cadena causal: todos los sistemas se ejecutan en orden
-- Test de determinismo: misma seed → mismo SelfSnapshot
-
-### Definition of Done (3A)
-1. Todos los sistemas implementados con interfaces formales
-2. La cadena causal se ejecuta en orden cada tick
-3. SelfSnapshot se reconstruye desde cero cada tick
-4. AffectState modula otros sistemas (pesos, umbrales)
-5. Ningún sistema escribe fuera de su declaración de salida
-6. Todo funciona sin LLM (determinista)
-7. Tests pasan (unitarios + cadena causal + determinismo)
-
-### Métricas mínimas
-- Build: 0 errores, 0 warnings
-- Tests: cobertura > 75%
-- Performance: tick completo < 5ms con 100 entities
 
 ### Dependencias
 - Sprint 2 completo
-- docs/17-computational-agent-model.md especificado y revisado
 
 ---
 
@@ -545,78 +455,27 @@ IdentityReconstructionSystem
 
 **Objetivo**: Implementar la primera hipótesis experimental del agente. ACMA (Agente Cognitivo con Memoria y Afecto) no es "la mente". Es un modelo concreto y reemplazable.
 
-**Estado**: Pendiente.
+**Estado**: En progreso — 3B.1 completado.
 
 ### Naturaleza del Sprint
 
 Este sprint marca la transición a riesgo **científico**. ACMA v1 es una hipótesis implementada. Puede haber ACMA v2, v3, etc. La infraestructura (3A) permite intercambiar modelos sin cambiar el motor.
 
-### Qué aporta ACMA v1 sobre la infraestructura 3A
+Se divide en micro-sprints incrementales. Cada uno deja un subsistema funcional y verificable.
 
-```
-Sprint 3A                          Sprint 3B
-─────────────────────────          ─────────────────────────
-PerceptionSystem         ▶         Misma implementación
-AttentionSystem          ▶         + Umbrales afectivos iniciales
-WorkingMemorySystem      ▶         + Chunk types específicos
-LongTermMemorySystem     ▶         + Consolidación con afecto
-AffectSystem             ▶         + Baselines de personalidad
-GoalSystem               ▶         + Goals iniciales de Aeris
-ReasoningSystem          ▶         + Sesgos por personalidad
-PlanningSystem           ▶         + WorldModel básico
-DecisionSystem           ▶         + Árbol de decisión inicial
-AuditorSystem            ▶         + Reglas de coherencia
-IdentityReconstruction   ▶         + SelfSnapshot con narrativa
-                                       autobiográfica
-WorldModelSystem         ▶         Nuevo en 3B (mapa interno,
-                                    relaciones causales,
-                                    teoría de otros)
-```
+### Micro-sprints
 
-### Estructura
-
-ACMA vive en su propio namespace y es intercambiable por configuración:
-
-```
-Aeris.Agent/               ← namespace
-├── ACMAVersion.cs         ← "v1"
-├── Perception/
-├── Attention/
-├── Affect/
-├── Memory/
-├── WorldModel/
-├── Reasoning/
-├── Goals/
-├── Planning/
-├── Decision/
-├── Audit/
-└── Identity/
-```
-
-### Entregables
-- Módulo `Aeris.Agent` con ACMA v1
-- WorldModelSystem (interno, no ECS)
-- SelfSnapshot con capacidad de resumen autobiográfico
-- Tests de integración: percepción → self → narrativa
-- Tests de coherencia del self a lo largo del tiempo
-- Documentación de la hipótesis ACMA v1
-
-### Definition of Done (3B)
-1. ACMA v1 produce SelfSnapshot consistente
-2. El SelfSnapshot puede alimentar al Semantic Extractor
-3. El sistema funciona sin LLM (determinista)
-4. Tests de coherencia de identidad pasan
-5. ACMA v1 puede reemplazarse por ACMA v2 sin cambiar el motor
-6. Tests pasan
-
-### Métricas mínimas
-- Build: 0 errores, 0 warnings
-- Tests: cobertura > 75%
-- Performance: tick completo < 10ms con 100 entities
-- SelfSnapshot generation: < 1ms
+| # | Sub-sistema | Estado | Dependencia |
+|---|-------------|--------|-------------|
+| 3B.1 | Memory Retrieval — RetrievalResult, IMemoryRetrievalStrategy, LinearScan, MemoryRetrievalSystem | ✅ Completado | CONTRACT-MR validado, S-001–S-010 |
+| 3B.2 | ACMA v1 Reasoning | ⏳ Pendiente | 3B.1 |
+| 3B.3 | ACMA v1 Planning | ⏳ Pendiente | 3B.2 |
+| 3B.4 | ACMA v1 Decision | ⏳ Pendiente | 3B.3 |
+| 3B.5 | ACMA v1 Auditor + IdentityReconstruction | ⏳ Pendiente | 3B.4 |
+| 3B.6 | SelfSnapshot completo + integración ACMA | ⏳ Pendiente | 3B.5 |
 
 ### Dependencias
-- Sprint 3B completo
+- Sprint 3A completo
 
 ---
 
@@ -1095,8 +954,9 @@ ACMA internamente (Sprint 3B):
 |--------|-------|-------|-------------|-----------|--------------|
 | S0 | N/A | N/A | N/A | N/A | N/A |
 | S1 | 0 errores | 100% pass | < 1ms/tick | > 80% core | 100% reproducible |
-| S2 | 0 errores | 100% pass | < 10ms extracción | > 70% | 100% |
-| S3A | 0 errores | 100% pass | < 5ms/tick | > 75% | 100% |
+| S2 | 0 errores | 100% pass (202 tests) | < 10ms extracción | > 70% | 100% |
+| S3A | 0 errores | 100% pass (210 tests) | < 5ms/tick | > 75% | 100% |
+| S3B | 0 errores | 100% pass (221 tests) | < 10ms/tick | > 75% | 100% |
 | S3B | 0 errores | 100% pass | < 10ms/tick | > 75% | 100% |
 | S3C | 0 errores | 100% pass | < 1ms (activado) / 0 alloc (desactivado) | — | 100% |
 | S4 | 0 errores | 100% pass | < 5s LLM | > 70% | N/A (LLM es probabilístico) |
