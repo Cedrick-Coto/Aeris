@@ -10,16 +10,19 @@ public sealed class SystemManager
 
     public void Register(ISystem system)
     {
-        Debug.Assert(system != null, "System cannot be null");
-        Debug.Assert(!_isExecuting, "Cannot register systems during execution");
-        Debug.Assert(!_isFrozen, "Cannot register systems after freeze");
+        ArgumentNullException.ThrowIfNull(system);
+        if (_isExecuting)
+            throw new InvalidOperationException("Cannot register systems during execution");
+        if (_isFrozen)
+            throw new InvalidOperationException("Cannot register systems after freeze");
 
         _systems.Add(system);
     }
 
     public void Freeze()
     {
-        Debug.Assert(!_isExecuting, "Cannot freeze during execution");
+        if (_isExecuting)
+            throw new InvalidOperationException("Cannot freeze during execution");
 
         _isFrozen = true;
         Validate();
@@ -28,7 +31,8 @@ public sealed class SystemManager
 
     public void ExecuteAll(World world, float deltaTime)
     {
-        Debug.Assert(_isFrozen, "Systems must be frozen before execution");
+        if (!_isFrozen)
+            throw new InvalidOperationException("Systems must be frozen before execution");
 
         _isExecuting = true;
 
