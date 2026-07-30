@@ -105,23 +105,22 @@ Para una descripción detallada de cada subsistema: [`docs/16-agent-architecture
 ```
 Sprint 0 ──► Sprint 1 ──► Sprint 2 ──► Sprint 3A ──► Sprint 3B ──► Sprint 3C ──► Sprint 4 ──► Sprint 5 ──► Sprint 6 ──► Sprint 7
 Arquitec.    Motor ECS    Sem. Extr.   Infra.       ACMA v1      Observa-     LLM          Narrativa    Mundo Pok.   Aeris
-(FROZEN)     (COMPL.)     (Pend.)      Cognitiva    (Modelo      bilidad      (Verbaliz.)  (Pipeline)   (Modelado)   (Personaje)
-                                        (Sistemas    Experimental)
-                                        Generales)
+(FROZEN)     (COMPL.)     (COMPL.)     Cognitiva    (En          bilidad      (Verbaliz.)  (Pipeline)   (Modelado)   (Personaje)
+                                        (COMPL.)    progreso)    (Planeado)   (Planeado)   (Planeado)   (Planeado)   (Planeado)
 ```
 
-| Sprint   | Estado     | Objetivo                                                                                       |
-| -------- | ---------- | ---------------------------------------------------------------------------------------------- |
-| Sprint 0 | ✅ Frozen   | Especificación arquitectónica y ADRs                                                           |
-| Sprint 1 | ✅ Complete | Motor ECS determinista (World, Systems, EventBus, Scheduler, Persistence)                      |
-| Sprint 2 | ⏳ Planned  | Semantic Extractor (extraer estado del mundo → SemanticState para el LLM)                      |
-| Sprint 3A| ⏳ Planned  | Infraestructura cognitiva (11 sistemas ECS deterministas)                                      |
-| Sprint 3B| ⏳ Planned  | ACMA v1 — primera hipótesis experimental del agente                                            |
-| Sprint 3C| ⏳ Planned  | Observabilidad (SelfSnapshot Inspector, Decision Trace, Reason Trace, etc.)                    |
-| Sprint 4 | ⏳ Planned  | Integración LLM (verbalizador, no pensador)                                                    |
-| Sprint 5 | ⏳ Planned  | Narrativa (Diálogo, Monólogo interno, Narración contextual)                                    |
-| Sprint 6 | ⏳ Planned  | Mundo Pokémon (Biología, Aura, Ecosistemas, Cultura, Lenguaje, Facciones)                      |
-| Sprint 7 | ⏳ Planned  | Aeris (Personaje completo e integración final)                                                 |
+| Sprint   | Estado        | Objetivo                                                                                       |
+| -------- | ------------- | ---------------------------------------------------------------------------------------------- |
+| Sprint 0 | ✅ Frozen      | Especificación arquitectónica y ADRs                                                           |
+| Sprint 1 | ✅ Complete    | Motor ECS determinista (World, Systems, EventBus, Scheduler, Persistence)                      |
+| Sprint 2 | ✅ Complete    | Semantic Extractor (extraer estado del mundo → SemanticState para el LLM)                      |
+| Sprint 3A| ✅ Complete    | Infraestructura cognitiva (7 sistemas ECS deterministas, 210 tests)                            |
+| Sprint 3B| 🔄 In progress | ACMA v1 — 3B.1 Memory Retrieval completado, 3B.2–3B.6 pendientes                               |
+| Sprint 3C| ⏳ Planned     | Observabilidad (SelfSnapshot Inspector, Decision Trace, Reason Trace, etc.)                    |
+| Sprint 4 | ⏳ Planned     | Integración LLM (verbalizador, no pensador)                                                    |
+| Sprint 5 | ⏳ Planned     | Narrativa (Diálogo, Monólogo interno, Narración contextual)                                    |
+| Sprint 6 | ⏳ Planned     | Mundo Pokémon (Biología, Aura, Ecosistemas, Cultura, Lenguaje, Facciones)                      |
+| Sprint 7 | ⏳ Planned     | Aeris (Personaje completo e integración final)                                                 |
 
 ---
 

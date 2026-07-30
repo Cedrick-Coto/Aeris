@@ -4,6 +4,36 @@ All notable changes to the Aeris project will be documented in this file.
 
 Format based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [Unreleased]
+
+### Sprint 3A — Cognitive Infrastructure
+- **PerceptionSystem**: Structured Percept[] from world events, sensory filtering
+- **AttentionSystem**: Fixed computational budget, salience filtering, AffectState modulation
+- **WorkingMemorySystem**: Limited capacity (N chunks, configurable), decay and refresh, salience tracking
+- **LongTermMemorySystem**: Episodic/semantic/procedural stores, consolidation, forgetting
+- **AffectSystem**: 9‑D continuous vector (Curiosity, Stress, Confidence, Trust, Novelty, Attachment, Threat, RewardExpectation, CognitiveLoad), homeostasis
+- **GoalSystem**: Activation, suspension, prioritization, progress tracking
+- **WorldModelSystem**: Internal map with observed entities and confidence
+- 210 tests, 0 failures
+
+### Sprint 3B.1 — Memory Retrieval
+- **RetrievalResult**: RetrievedMemoryEntry, RetrievalEvidence, RetrievalOperation
+- **IMemoryRetrievalStrategy**: Strategy contract + MemoryRetrievalContext
+- **LinearScanStrategy**: Baseline scoring (importance×0.4 + recency×0.3 + contextOverlap×0.2 + attentionRelevance×0.1)
+- **MemoryRetrievalSystem**: ECS orchestrator — reads LTM/WM/Affect, invokes strategy, writes WM chunks, emits CausalTrace
+- CONTRACT-MR validated (S-001–S-010), determinism verified, strategy reemplazabilidad
+- 11 new tests, 221 total, 0 failures
+
+## [0.2.0-semantics] - 2026-07-28
+
+### Sprint 2 — Semantic Extractor
+- **SemanticExtractor**: Entity extraction, context extraction, memory extraction, emotion extraction, goal extraction, relationship extraction
+- **SemanticState**: Structured output (target entity, nearby entities, current situation, relevant memories, emotional state, active goals, key relationships)
+- **FactNormalizer**: Normalizes triples (subject‑predicate‑object) with confidence
+- **SemanticValidator**: Schema validation, confidence thresholds
+- **PromptBuilder**: System instructions, semantic state serialization, player input formatting, output schema definition
+- 202 tests, 0 failures
+
 ## [0.1.0-engine] - 2026-07-27
 
 ### Sprint 0 — Architecture Specification (Frozen)
