@@ -2,7 +2,7 @@
 
 **Estado**: Draft  
 **Última actualización**: 2026-07-30  
-**Versión**: 0.1  
+**Versión**: 0.2  
 
 ---
 
@@ -80,6 +80,7 @@ public interface IAuditRule
     string RuleId { get; }
     string RuleVersion { get; }
     string Description { get; }
+    string[] SupportedArtifactTypes { get; }
     AuditViolation? Evaluate(IAuditableArtifact artifact);
 }
 ```
@@ -89,17 +90,39 @@ public interface IAuditRule
 | `RuleId` | Identificador único de la regla |
 | `RuleVersion` | Versión semántica de la regla |
 | `Description` | Propósito legible de la regla |
+| `SupportedArtifactTypes` | Tipos de artefacto que esta regla puede evaluar (ej. `["DecisionResult"]`) |
+| `Evaluate` | Retorna `null` si el artefacto cumple; `AuditViolation` si viola o no es aplicable |
+
+| Campo | Descripción |
+|-------|-------------|
+| `RuleId` | Identificador único de la regla |
+| `RuleVersion` | Versión semántica de la regla |
+| `Description` | Propósito legible de la regla |
 | `Evaluate` | Retorna `null` si el artefacto cumple; `AuditViolation` si viola |
+
+### RuleVerdict
+
+```csharp
+public enum RuleVerdict
+{
+    NotApplicable,   // La regla no corresponde al contexto del artefacto
+    Satisfied,       // La regla se cumple
+    Violated         // La regla se incumple
+}
+```
+
+`NotApplicable` evita tener que asignar severidades a reglas que simplemente no correspondían al tipo de artefacto o contexto evaluado.
 
 ### AuditViolation
 
 | Campo | Tipo | Descripción |
 |-------|------|-------------|
-| `RuleId` | string | Regla violada |
+| `RuleId` | string | Regla evaluada |
 | `RuleVersion` | string | Versión de la regla |
-| `Severity` | `ViolationSeverity` | Bajo, Medio, Alto, Crítico |
-| `Condition` | string | Condición específica que se violó |
-| `Evidence` | string | Evidencia que sustenta la violación |
+| `Verdict` | `RuleVerdict` | Resultado de la evaluación |
+| `Severity` | `ViolationSeverity` | Bajo, Medio, Alto, Crítico (solo si `Violated`) |
+| `Condition` | string | Condición específica evaluada |
+| `Evidence` | string | Evidencia que sustenta el veredicto |
 | `ArtifactId` | uint | ID del artefacto evaluado |
 
 ### ViolationSeverity
@@ -170,7 +193,28 @@ public sealed class AuditResult
 
 ---
 
-## 7. Baseline algorithm: SequentialRuleEvaluator
+## 7. RuleRegistry
+
+Infraestructura para registrar y resolver reglas. No es un subsistema ECS; es una capa de infraestructura que el `AuditSystem` consume.
+
+```csharp
+public sealed class RuleRegistry
+{
+    public void Register(IAuditRule rule);
+    public List<IAuditRule> GetRulesFor(string artifactType);
+}
+```
+
+- ACMA v1 registra sus reglas.
+- ACMA v2 registra otras.
+- MinimalAgent registra dos reglas.
+- DevelopmentalAgent registra veinte.
+
+El `Auditor` permanece idéntico.
+
+---
+
+## 8. Baseline algorithm: SequentialRuleEvaluator
 
 ```
 For each rule in Rules:
@@ -191,7 +235,7 @@ El baseline ejecuta todas las reglas secuencialmente, sin cortocircuito (todas l
 
 ---
 
-## 8. Invariants
+## 9. Invariants
 
 ### A-001 — Pure evaluation
 
@@ -233,7 +277,7 @@ Solo conoce el contrato `IAuditableArtifact` y `IAuditRule`.
 
 ---
 
-## 9. Strategy abstraction
+## 10. Strategy abstraction
 
 ```csharp
 public interface IAuditStrategy
@@ -265,7 +309,7 @@ El `AuditSystem`:
 
 ---
 
-## 10. Enforcement (separado, no incluido en este contrato)
+## 11. Enforcement (separado, no incluido en este contrato)
 
 **No forma parte del Auditor.**
 
@@ -286,7 +330,7 @@ El Enforcement nunca modifica directamente el artefacto. Sus salidas son comando
 
 ---
 
-## 11. Validation scenarios
+## 12. Validation scenarios
 
 ### S-A001 — Artifact pasa todas las reglas
 
@@ -330,7 +374,7 @@ El Auditor nunca produce comandos de bloqueo, modificación o replanificación. 
 
 ---
 
-## 12. Criterio de éxito de 3B.5
+## 13. Criterio de éxito de 3B.5
 
 > **Existe un mecanismo de auditoría puro que puede evaluar cualquier artefacto contractual contra un conjunto intercambiable de reglas, sin modificar el artefacto ni decidir la respuesta.**
 
@@ -342,7 +386,7 @@ El Auditor nunca produce comandos de bloqueo, modificación o replanificación. 
 
 ---
 
-## 13. Dependencies
+## 14. Dependencies
 
 - **Sprint 3B.4**: completado. Primer artefacto auditable: `DecisionResult`.
 - **Sprint 3B.1–3B.3**: completados. Artefactos futuros auditables: `Inference`, `PlanCandidate`.
@@ -354,3 +398,4 @@ El Auditor nunca produce comandos de bloqueo, modificación o replanificación. 
 | Versión | Fecha | Cambio |
 |---------|-------|--------|
 | 0.1 | 2026-07-30 | Draft inicial |
+| 0.2 | 2026-07-30 | +RuleVerdict (NotApplicable/Satisfied/Violated), +RuleRegistry, secciones renumeradas |
