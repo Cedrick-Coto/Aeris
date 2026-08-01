@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Aeris.Engine;
 
 public sealed class EvidenceBasedReasoningStrategy : IReasoningStrategy
@@ -6,22 +10,106 @@ public sealed class EvidenceBasedReasoningStrategy : IReasoningStrategy
     {
         new ReasoningRule
         {
-            RuleId = "evidence-based-001",
+            RuleId = "spatial-association-001",
             Version = 1,
-            Label = "EvidenceBasedInference",
-            Description = "Si hay evidencia suficiente en la memoria de trabajo, inferir una conclusión basada en la evidencia acumulada",
-            MinPremises = 1,
+            Label = "SpatialAssociation",
+            Description = "Genera una inferencia cuando existe una relación espacial conocida entre evidencias.",
+            MinPremises = 2,
             MaxPremises = 5,
-            BaseWeight = 0.7f,
+            BaseWeight = 0.6f,
             PremiseMatcher = facts =>
             {
-                // Lógica de coincidencia de premisas para EvidenceBasedReasoningStrategy
-                return facts.Length >= 1;
+                // Detect spatial relation keywords
+                return facts.Any(f => f.Contains("near", StringComparison.OrdinalIgnoreCase) ||
+                                     f.Contains("adjacent", StringComparison.OrdinalIgnoreCase) ||
+                                     f.Contains("next to", StringComparison.OrdinalIgnoreCase) ||
+                                     f.Contains("behind", StringComparison.OrdinalIgnoreCase) ||
+                                     f.Contains("in front of", StringComparison.OrdinalIgnoreCase) ||
+                                     f.Contains("left of", StringComparison.OrdinalIgnoreCase) ||
+                                     f.Contains("right of", StringComparison.OrdinalIgnoreCase) ||
+                                     f.Contains("above", StringComparison.OrdinalIgnoreCase) ||
+                                     f.Contains("below", StringComparison.OrdinalIgnoreCase));
             },
             InferenceBuilder = facts =>
             {
-                // Construir conclusión basada en evidencia acumulada
-                return "Conclusión basada en evidencia acumulada";
+                return "Spatial association inferred";
+            }
+        },
+        new ReasoningRule
+        {
+            RuleId = "causal-sequence-001",
+            Version = 1,
+            Label = "CausalSequence",
+            Description = "Genera una inferencia cuando existe un patrón causal conocido entre evidencias.",
+            MinPremises = 2,
+            MaxPremises = 5,
+            BaseWeight = 0.6f,
+            PremiseMatcher = facts =>
+            {
+                // Detect causal keywords
+                return facts.Any(f => f.Contains("cause", StringComparison.OrdinalIgnoreCase) ||
+                                     f.Contains("because", StringComparison.OrdinalIgnoreCase) ||
+                                     f.Contains("leads to", StringComparison.OrdinalIgnoreCase) ||
+                                     f.Contains("results in", StringComparison.OrdinalIgnoreCase) ||
+                                     f.Contains("therefore", StringComparison.OrdinalIgnoreCase) ||
+                                     f.Contains("thus", StringComparison.OrdinalIgnoreCase) ||
+                                     f.Contains("so", StringComparison.OrdinalIgnoreCase));
+            },
+            InferenceBuilder = facts =>
+            {
+                return "Causal sequence inferred";
+            }
+        },
+        new ReasoningRule
+        {
+            RuleId = "goal-relevance-001",
+            Version = 1,
+            Label = "GoalRelevance",
+            Description = "Detecta inferencias relacionadas con Goals activos sin modificar Confidence, Conclusion o Premises.",
+            MinPremises = 1,
+            MaxPremises = 5,
+            BaseWeight = 0.5f,
+            PremiseMatcher = facts =>
+            {
+                // Detect goal‑related keywords
+                return facts.Any(f => f.Contains("goal", StringComparison.OrdinalIgnoreCase) ||
+                                     f.Contains("objective", StringComparison.OrdinalIgnoreCase) ||
+                                     f.Contains("target", StringComparison.OrdinalIgnoreCase) ||
+                                     f.Contains("want", StringComparison.OrdinalIgnoreCase) ||
+                                     f.Contains("need", StringComparison.OrdinalIgnoreCase) ||
+                                     f.Contains("intend", StringComparison.OrdinalIgnoreCase));
+            },
+            InferenceBuilder = facts =>
+            {
+                // No modification of conclusion; return a generic placeholder that indicates relevance
+                return "Goal relevance inferred";
+            }
+        },
+        new ReasoningRule
+        {
+            RuleId = "contradiction-001",
+            Version = 1,
+            Label = "Contradiction",
+            Description = "Detecta evidencias mutuamente incompatibles y genera una inferencia de conflicto.",
+            MinPremises = 2,
+            MaxPremises = 5,
+            BaseWeight = 0.4f,
+            PremiseMatcher = facts =>
+            {
+                // Detect contradictory keywords
+                bool hasAffirmative = facts.Any(f => f.Contains("yes", StringComparison.OrdinalIgnoreCase) ||
+                                                    f.Contains("positive", StringComparison.OrdinalIgnoreCase) ||
+                                                    f.Contains("accept", StringComparison.OrdinalIgnoreCase) ||
+                                                    f.Contains("confirm", StringComparison.OrdinalIgnoreCase));
+                bool hasNegative = facts.Any(f => f.Contains("no", StringComparison.OrdinalIgnoreCase) ||
+                                                f.Contains("negative", StringComparison.OrdinalIgnoreCase) ||
+                                                f.Contains("reject", StringComparison.OrdinalIgnoreCase) ||
+                                                f.Contains("deny", StringComparison.OrdinalIgnoreCase));
+                return hasAffirmative && hasNegative;
+            },
+            InferenceBuilder = facts =>
+            {
+                return "Contradiction detected";
             }
         }
     };
