@@ -136,7 +136,7 @@ ReasoningResult
     Inference[]          Inferences;
     ReasoningEvidence[]  Evidence;
 }
-```
+````
 
 ---
 
@@ -166,7 +166,7 @@ Inference
     string        Conclusion;
     float         Confidence;
 }
-```
+````
 
 ---
 
@@ -255,7 +255,7 @@ RuleDescriptor
     int    Version;
     string Description;
 }
-```
+````
 
 ---
 
@@ -314,7 +314,7 @@ ReasoningEvidence
 
     string RuleId;
 
-    int    PremiseCount;
+    EvidenceRef[] Premises;
 
     string Transformation;
 
@@ -324,7 +324,7 @@ ReasoningEvidence
 
     string Strategy;
 }
-```
+````
 
 ---
 
@@ -487,7 +487,7 @@ IReasoningStrategy
 {
     ReasoningResult Reason(ReasoningContext context);
 }
-```
+````
 
 ---
 
