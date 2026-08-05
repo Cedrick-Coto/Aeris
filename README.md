@@ -115,7 +115,7 @@ Arquitec.    Motor ECS    Sem. Extr.   Infra.       ACMA v1      Observa-     LL
 | Sprint 1 | ✅ Complete    | Motor ECS determinista (World, Systems, EventBus, Scheduler, Persistence)                      |
 | Sprint 2 | ✅ Complete    | Semantic Extractor (extraer estado del mundo → SemanticState para el LLM)                      |
 | Sprint 3A| ✅ Complete    | Infraestructura cognitiva (7 sistemas ECS deterministas, 210 tests)                            |
-| Sprint 3B| 🔄 In progress | ACMA v1 — 3B.1 Memory Retrieval ✅, 3B.2 Reasoning Contract ✅, 3B.3–3B.6 pendientes           |
+| Sprint 3B| 🔄 In progress | ACMA v1 — 3B.1 Memory Retrieval ✅, 3B.2 Reasoning ✅, 3B.3 Planning ✅ (baseline + EXP-0004), 3B.4–3B.6 pendientes |
 | Sprint 3C| ⏳ Planned     | Observabilidad (SelfSnapshot Inspector, Decision Trace, Reason Trace, etc.)                    |
 | Sprint 4 | ⏳ Planned     | Integración LLM (verbalizador, no pensador)                                                    |
 | Sprint 5 | ⏳ Planned     | Narrativa (Diálogo, Monólogo interno, Narración contextual)                                    |
