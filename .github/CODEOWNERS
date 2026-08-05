@@ -1,0 +1,23 @@
+# Aeris CODEOWNERS
+
+# Default maintainer
+* @Cedrick-Coto
+
+# Core architecture
+/Core/ @Cedrick-Coto
+
+# Simulation systems
+/World/ @Cedrick-Coto
+/Characters/ @Cedrick-Coto
+
+# Knowledge and reasoning systems
+/Knowledge/ @Cedrick-Coto
+
+# Narrative pipeline
+/Narrative/ @Cedrick-Coto
+
+# Persistence layer
+/Persistence/ @Cedrick-Coto
+
+# Development tooling and CI
+/.github/ @Cedrick-Coto
