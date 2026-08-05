@@ -140,6 +140,7 @@ Toda contribución debe respetar los 6 principios arquitectónicos (determinismo
 ```bash
 # Clone
 git clone https://github.com/Cedrick-Coto/Aeris
+
 # Build
 dotnet build
 
