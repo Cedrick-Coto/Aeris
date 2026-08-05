@@ -345,7 +345,7 @@ Es:
 
 ## 10. Dependencies
 
-- **CONTRACT-PLANNING**: activo. Decision consume `CandidatePlan[]`.
+- **CONTRACT-PLANNING v0.3**: activo. Decision consume `CandidatePlan[]`.
 - **Sprint 3B.3**: completado. Planning pipeline cerrado.
 - **Sprint 3A**: completado. Decision consume `WorldModelState`, `AffectState`, `GoalStore`.
 

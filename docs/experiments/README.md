@@ -48,3 +48,4 @@ Evidence
 |----|-----------|------------|-------|--------|
 | [EXP-0002](EXP-0002.md) | Intercambiabilidad de estrategias de razonamiento (3X.3.2) | Axioma A2 (variabilidad en el modelo) | ACMA v1 | Complete |
 | [EXP-0003](EXP-0003.md) | Intercambiabilidad de estrategias de recuperación de memoria (3X.3.3) | Axioma A2 (variabilidad en el modelo) | ACMA v1 | Complete |
+| [EXP-0004](EXP-0004.md) | Intercambiabilidad de estrategias de planificación (3X.3.4) | Axioma A2 (variabilidad en el modelo) | ACMA v1 | Complete |

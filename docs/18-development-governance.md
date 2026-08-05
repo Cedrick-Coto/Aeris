@@ -1,8 +1,8 @@
 # 18. Development Governance
 
-**Versión**: 0.2  
+**Versión**: 0.3  
 **Estado**: Activo  
-**Última actualización**: 2026-07-30  
+**Última actualización**: 2026-08-05  
 
 ---
 
@@ -214,6 +214,21 @@ Esto evita atribuir automáticamente un mal resultado al modelo cognitivo cuando
 3. Actualizar la especificación afectada (doc-17)
 4. Actualizar el contrato afectado
 5. Ajustar el plan de sprints si es necesario
+
+### 3.10 Reconciliación vs Evolución de contratos
+
+Cuando una auditoría encuentra que un contrato documental describe un comportamiento distinto al implementado, el cierre debe declarar explícitamente el modo:
+
+| Modo | Naturaleza | Flujo | Impacto |
+|------|-----------|-------|---------|
+| **Reconciliación documental** | No funcional. El contrato se alinea al comportamiento ya existente. | Auditoría → Hallazgos → Reconciliación (editar solo el documento) → Contrato actualizado → Revisión | No introduce comportamiento nuevo; no toca código, interfaces, tests ni infraestructura |
+| **Evolución del contrato** | Funcional. El contrato introduce comportamiento nuevo que aún no existe. | Contrato → Implementación → Tests → Evidencia (EXP) → Contrato estable | Aplica el pipeline completo (§2) y la Admission Gate (§1.1) |
+
+Reglas:
+
+- La **Reconciliación** solo procede cuando el comportamiento implementado es el deseado y la desviación es documental. Cualquier desviación que represente una capacidad ausente se registra como revisión documental pendiente con prioridad explícita, y no se resuelve cambiando código.
+- Cada reconciliación se registra en el historial del contrato (nueva versión, Draft) y su evidencia de alineación queda en el experimento o informe que la motivó.
+- Ejemplo aplicado: `docs/contracts/Planning.contract.md` v0.3 (2026-08-05), reconciliado tras la auditoría F1–F11; las revisiones pendientes (S-P007 Alta; S-P001/S-P002 Baja; Greedy Media) quedaron registradas sin cambios de código.
 
 ---
 
