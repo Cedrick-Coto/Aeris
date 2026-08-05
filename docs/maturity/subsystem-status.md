@@ -75,12 +75,22 @@
 | Subsystem | Level | Evidence | Blocked by |
 |-----------|-------|----------|------------|
 | ACMA v1 Reasoning | M0 | ACMA-v1.md | Sprint 3B.1 |
+| ACMA v1 MemoryRetrieval | M0 | ACMA-v1.md; EXP-0003 (estrategia reemplazable, MR-I001..MR-I005) | Sprint 3B.1 |
 | ACMA v1 Planning | M0 | ACMA-v1.md | Sprint 3B.2 |
 | ACMA v1 Decision | M0 | ACMA-v1.md | Sprint 3B.3 |
 | ACMA v1 Auditor | M0 | ACMA-v1.md | Sprint 3B.4 |
 | ACMA v1 IdentityReconstruction | M0 | ACMA-v1.md | Sprint 3B.5 |
 | ACMA v1 SelfSnapshot | M0 | — | Sprint 3B.6 |
 | ACMA v1 AffectModel | M0 | ACMA-v1.md | Sprint 3B (merged with Goal) |
+
+**Memory Retrieval — estrategia reemplazable (EXP-0003, validado)**: la propiedad de intercambiabilidad de `IMemoryRetrievalStrategy` queda validada por MR-I001..MR-I005 (MemoryRetrievalInterchangeabilityTests). Capacidades validadas:
+- estrategia reemplazable sin modificar infraestructura (ECS, MemoryRetrievalSystem, WorkingMemory, Reasoning, Planning, Decision, Auditor, Enforcement);
+- determinismo preservado (MR-I002);
+- ausencia de side effects a nivel estrategia (MR-I003);
+- localidad del efecto (MR-I004);
+- compatibilidad con pipeline downstream Perception→Attention→WM→LTM→Retrieval→Reasoning→Planning→Decision (MR-I005).
+
+No implica validación completa de Memory Retrieval como modelo cognitivo (ACMA v1); valida la propiedad de reemplazabilidad de la estrategia. Limitación registrada: `MemoryData` no permite modelar frecuencia de acceso (gap documentado en EXP-0003).
 
 ### Observability (Sprint 3C — Planned)
 
