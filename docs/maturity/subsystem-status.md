@@ -143,6 +143,29 @@ No implica validación completa de Planning como modelo cognitivo (ACMA v1); val
 - **S-P001 / S-P002 (Baja)**: nombres de acciones (`MoveToward<Goal>`, `Interact`) meramente ilustrativos; documentar esa naturaleza.
 - **GreedyPlanningStrategy (Media)**: reflejar explícitamente la segunda estrategia en el contrato para trazabilidad de intercambiabilidad.
 
+**3X.3 — Model Interchangeability (cierre metodológico)**: la propiedad de intercambiabilidad de estrategia queda validada para los siguientes subsistemas. Cierre formal: [`docs/maturity/3X.3-close.md`](3X.3-close.md).
+
+**Con evidencia (estrategia reemplazable)**:
+
+| Subsistema | Evidencia | Tests |
+|------------|-----------|-------|
+| Reasoning | EXP-0002 | ReasoningInterchangeabilityTests (RI-001…RI-005) |
+| Memory Retrieval | EXP-0003 | MemoryRetrievalInterchangeabilityTests (MR-I001…MR-I005) |
+| Planning | EXP-0004 | PlanningInterchangeabilityTests (P-I001…P-I005) |
+| Attention | EXP-0001 (referenciado; informe no presente en repo) | — |
+
+**Sin evidencia de intercambiabilidad** (no se afirma la propiedad):
+
+| Subsistema | Estado | Nota |
+|------------|--------|------|
+| Decision | M0 | P-I004 demuestra desacoplamiento de la estrategia de planificación; sin swap de `IDecisionPolicy` |
+| Auditor | M0 | — |
+| IdentityReconstruction | M0 | — |
+| SelfSnapshot | M0 | — |
+| AffectModel | M0 | — |
+
+La evidencia de intercambiabilidad valida la *reemplazabilidad de la estrategia*, no la calidad cognitiva del modelo: no eleva el nivel de madurez de los subsistemas ACMA v1 (permanecen en M0).
+
 ### Observability (Sprint 3C — Planned)
 
 | Subsystem | Level | Evidence | Blocked by |

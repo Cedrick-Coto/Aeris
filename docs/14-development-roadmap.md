@@ -1,8 +1,8 @@
 # 14. Development Roadmap
 
-**Versión**: 0.4  
+**Versión**: 0.5  
 **Estado**: Activo  
-**Última actualización**: 2026-07-30
+**Última actualización**: 2026-08-05
 
 ---
 
@@ -455,7 +455,7 @@ WorldModelSystem       → Mapa interno con entidades observadas
 
 **Objetivo**: Implementar la primera hipótesis experimental del agente. ACMA (Agente Cognitivo con Memoria y Afecto) no es "la mente". Es un modelo concreto y reemplazable.
 
-**Estado**: En progreso — 3B.1 completado.
+**Estado**: En progreso — 3B.1–3B.3 completados (3B.4–3B.6 pendientes).
 
 ### Naturaleza del Sprint
 
@@ -468,11 +468,23 @@ Se divide en micro-sprints incrementales. Cada uno deja un subsistema funcional 
 | # | Sub-sistema | Estado | Dependencia |
 |---|-------------|--------|-------------|
 | 3B.1 | Memory Retrieval — RetrievalResult, IMemoryRetrievalStrategy, LinearScan, MemoryRetrievalSystem | ✅ Completado | CONTRACT-MR validado, S-001–S-010 |
-| 3B.2 | ACMA v1 Reasoning | ⏳ Pendiente | 3B.1 |
-| 3B.3 | ACMA v1 Planning | ⏳ Pendiente | 3B.2 |
+| 3B.2 | ACMA v1 Reasoning | ✅ Completado | CONTRACT-REASONING v0.3, EXP-0002 |
+| 3B.3 | ACMA v1 Planning | ✅ Completado | CONTRACT-PLANNING v0.3, EXP-0004 |
 | 3B.4 | ACMA v1 Decision | ⏳ Pendiente | 3B.3 |
 | 3B.5 | ACMA v1 Auditor + IdentityReconstruction | ⏳ Pendiente | 3B.4 |
 | 3B.6 | SelfSnapshot completo + integración ACMA | ⏳ Pendiente | 3B.5 |
+
+### Track 3X — Model Interchangeability (cerrado)
+
+Fase paralela a 3B: validar que la infraestructura permite intercambiar estrategias sin modificar arquitectura ni contratos (Axioma A2). Estado: **listo para cierre metodológico** — ver [`docs/maturity/3X.3-close.md`](maturity/3X.3-close.md).
+
+| Micro-sprint | Subsistema | Evidencia | Suite (Release) |
+|--------------|------------|-----------|-----------------|
+| 3X.3.2 | Reasoning | EXP-0002 (RI-001…RI-005) | 329/329 |
+| 3X.3.3 | Memory Retrieval | EXP-0003 (MR-I001…MR-I005) | 334/334 |
+| 3X.3.4 | Planning | EXP-0004 (P-I001…P-I005) | 341/341 |
+
+No se inicia un nuevo micro-sprint de intercambiabilidad hasta cerrar esta fase.
 
 ### Dependencias
 - Sprint 3A completo
@@ -956,8 +968,7 @@ ACMA internamente (Sprint 3B):
 | S1 | 0 errores | 100% pass | < 1ms/tick | > 80% core | 100% reproducible |
 | S2 | 0 errores | 100% pass (202 tests) | < 10ms extracción | > 70% | 100% |
 | S3A | 0 errores | 100% pass (210 tests) | < 5ms/tick | > 75% | 100% |
-| S3B | 0 errores | 100% pass (221 tests) | < 10ms/tick | > 75% | 100% |
-| S3B | 0 errores | 100% pass | < 10ms/tick | > 75% | 100% |
+| S3B | 0 errores | 100% pass (341 tests) | < 10ms/tick | > 75% | 100% |
 | S3C | 0 errores | 100% pass | < 1ms (activado) / 0 alloc (desactivado) | — | 100% |
 | S4 | 0 errores | 100% pass | < 5s LLM | > 70% | N/A (LLM es probabilístico) |
 | S5 | 0 errores | 100% pass | < 50ms pipeline | > 70% | N/A |
