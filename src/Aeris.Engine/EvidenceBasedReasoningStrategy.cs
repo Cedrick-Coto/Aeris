@@ -47,13 +47,21 @@ public sealed class EvidenceBasedReasoningStrategy : IReasoningStrategy
             PremiseMatcher = facts =>
             {
                 // Detect causal keywords
-                return facts.Any(f => f.Contains("cause", StringComparison.OrdinalIgnoreCase) ||
-                                     f.Contains("because", StringComparison.OrdinalIgnoreCase) ||
-                                     f.Contains("leads to", StringComparison.OrdinalIgnoreCase) ||
-                                     f.Contains("results in", StringComparison.OrdinalIgnoreCase) ||
-                                     f.Contains("therefore", StringComparison.OrdinalIgnoreCase) ||
-                                     f.Contains("thus", StringComparison.OrdinalIgnoreCase) ||
-                                     f.Contains("so", StringComparison.OrdinalIgnoreCase));
+                bool hasEvent = facts.Any(f => f.Contains("observed", StringComparison.OrdinalIgnoreCase) ||
+                                              f.Contains("seen", StringComparison.OrdinalIgnoreCase) ||
+                                              f.Contains("happened", StringComparison.OrdinalIgnoreCase) ||
+                                              f.Contains("occurred", StringComparison.OrdinalIgnoreCase));
+                bool hasPattern = facts.Any(f => f.Contains("after", StringComparison.OrdinalIgnoreCase) ||
+                                                 f.Contains("cause", StringComparison.OrdinalIgnoreCase) ||
+                                                 f.Contains("causes", StringComparison.OrdinalIgnoreCase) ||
+                                                 f.Contains("because", StringComparison.OrdinalIgnoreCase) ||
+                                                 f.Contains("leads to", StringComparison.OrdinalIgnoreCase) ||
+                                                 f.Contains("leads", StringComparison.OrdinalIgnoreCase) ||
+                                                 f.Contains("results in", StringComparison.OrdinalIgnoreCase) ||
+                                                 f.Contains("followed", StringComparison.OrdinalIgnoreCase) ||
+                                                 f.Contains("therefore", StringComparison.OrdinalIgnoreCase) ||
+                                                 f.Contains("thus", StringComparison.OrdinalIgnoreCase));
+                return hasEvent && hasPattern;
             },
             InferenceBuilder = facts =>
             {
@@ -102,14 +110,58 @@ public sealed class EvidenceBasedReasoningStrategy : IReasoningStrategy
                                                     f.Contains("accept", StringComparison.OrdinalIgnoreCase) ||
                                                     f.Contains("confirm", StringComparison.OrdinalIgnoreCase));
                 bool hasNegative = facts.Any(f => f.Contains("no", StringComparison.OrdinalIgnoreCase) ||
-                                                f.Contains("negative", StringComparison.OrdinalIgnoreCase) ||
-                                                f.Contains("reject", StringComparison.OrdinalIgnoreCase) ||
-                                                f.Contains("deny", StringComparison.OrdinalIgnoreCase));
-                return hasAffirmative && hasNegative;
+                                                 f.Contains("negative", StringComparison.OrdinalIgnoreCase) ||
+                                                 f.Contains("reject", StringComparison.OrdinalIgnoreCase) ||
+                                                 f.Contains("deny", StringComparison.OrdinalIgnoreCase));
+                if (hasAffirmative && hasNegative)
+                    return true;
+
+                if (facts.Length < 2)
+                    return false;
+
+                string a = facts[0].ToLowerInvariant();
+                string b = facts[1].ToLowerInvariant();
+
+                if (TryGetFirstEntityId(a, out int idA) && TryGetFirstEntityId(b, out int idB) && idA != idB)
+                    return false;
+
+                bool sameSubject = false;
+                foreach (var word in a.Split(' '))
+                {
+                    if (word.Length > 3 && b.Contains(word))
+                    {
+                        sameSubject = true;
+                        break;
+                    }
+                }
+                if (!sameSubject)
+                    return false;
+
+                string[] opposites = { "north/south", "south/north", "east/west", "west/east" };
+                foreach (var pair in opposites)
+                {
+                    var parts = pair.Split('/');
+                    if ((a.Contains(parts[0]) && b.Contains(parts[1])) ||
+                        (a.Contains(parts[1]) && b.Contains(parts[0])))
+                        return true;
+                }
+
+                return false;
             },
             InferenceBuilder = facts =>
             {
-                return "Contradiction detected";
+                string subject = "";
+                foreach (var word in facts[0].Split(' '))
+                {
+                    if (word.Length > 3 && facts[1].ToLowerInvariant().Contains(word.ToLowerInvariant()))
+                    {
+                        subject = word;
+                        break;
+                    }
+                }
+                return subject != ""
+                    ? $"Conflicto de ubicación ({subject})"
+                    : "Conflicto detectado entre afirmaciones incompatibles";
             }
         }
     };
@@ -193,5 +245,19 @@ public sealed class EvidenceBasedReasoningStrategy : IReasoningStrategy
             ? (float)inf.Premises.Length / rule.MaxPremises
             : 0f;
         return Math.Clamp(inf.Confidence * premiseRatio, 0f, 1f);
+    }
+
+    private static bool TryGetFirstEntityId(string text, out int id)
+    {
+        id = 0;
+        foreach (var token in text.Split(' '))
+        {
+            if (int.TryParse(token, out int parsed))
+            {
+                id = parsed;
+                return true;
+            }
+        }
+        return false;
     }
 }

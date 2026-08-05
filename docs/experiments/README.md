@@ -46,4 +46,4 @@ Evidence
 
 | ID | Objective | Hypothesis | Model | Status |
 |----|-----------|------------|-------|--------|
-| — | — | — | — | — |
+| [EXP-0002](EXP-0002.md) | Intercambiabilidad de estrategias de razonamiento (3X.3.2) | Axioma A2 (variabilidad en el modelo) | ACMA v1 | Complete |
