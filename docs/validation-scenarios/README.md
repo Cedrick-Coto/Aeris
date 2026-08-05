@@ -10,7 +10,7 @@ No son tests. Son la **especificación del comportamiento esperado**. Los tests 
 |---------|--------------|--------|
 | `3B-memory-retrieval.md` | 3B.1 — Memory Retrieval | Completo |
 | `3B-reasoning.md` | 3B.2 — Reasoning | Draft |
-| `3B-planning.md` | 3B.3 — Planning | Índice |
+| `3B-planning.md` | 3B.3 — Planning | Detallado |
 | `3B-decision.md` | 3B.4 — Decision | Índice |
 | `3B-auditor.md` | 3B.5 — Auditor | Índice |
 | `3B-identity.md` | 3B.6 — Identity Reconstruction | Índice |
@@ -21,7 +21,8 @@ No son tests. Son la **especificación del comportamiento esperado**. Los tests 
 
 - 3B.1: escenarios completos
 - 3B.2: draft (depende de cómo termine Retrieval)
-- 3B.3–3B.7: solo índice con escenarios previstos
+- 3B.3: detallado (tras implementar y validar Planning; evidencia EXP-0004)
+- 3B.4–3B.7: solo índice con escenarios previstos
 
 Razón: especificar justo lo necesario para desbloquear la implementación. Los micro-sprints dependientes se detallan cuando el anterior está implementado y validado.
 

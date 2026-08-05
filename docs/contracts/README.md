@@ -20,6 +20,7 @@ No theory. No implementation. No literary justification. Only the contract.
 | `Planning.contract.md` | PlanningSystem | 3B.3 | Draft |
 | `Decision.contract.md` | DecisionSystem | 3B.4 | Draft |
 | `Auditor.contract.md` | AuditorSystem | 3B.5 | Draft |
+| `Enforcement.contract.md` | EnforcementSystem | 3B.5 | Draft |
 | `IdentityReconstruction.contract.md` | IdentityReconstructionSystem | 3B.6 | Draft |
 | `CausalTrace.contract.md` | CausalTrace (observador transversal) | 3B transversal | Draft |
 | `Knowledge.contract.md` | KnowledgeUpdateSystem | 3X | Draft |

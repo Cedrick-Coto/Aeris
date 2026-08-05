@@ -6,20 +6,120 @@ on:
     paths:
       - "docs/**"
       - "README.md"
+      - "CHANGELOG.md"
+      - "CONTRIBUTING.md"
+      - "CODE_OF_CONDUCT.md"
+      - "SECURITY.md"
+      - "models/**"
+      - ".github/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "README.md"
+      - "CHANGELOG.md"
+      - "CONTRIBUTING.md"
+      - "CODE_OF_CONDUCT.md"
+      - "SECURITY.md"
+      - "models/**"
+      - ".github/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  check-links:
+  check-docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Check internal links
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Check internal markdown links
+        shell: bash
         run: |
-          echo "Checking for broken internal references..."
-          # Extrae rutas docs/... de todos los .md (recursivo) y verifica que existan
-          find docs/ README.md -name '*.md' -exec grep -oPh 'docs/[^)''"` >\t]+' {} + | sort -u | while IFS= read -r ref; do
-            if [ ! -e "$ref" ]; then
-              echo "  MISSING: $ref"
-              exit 1
+          set -uo pipefail
+          status=0
+          checked=0
+          missing=0
+
+          while IFS= read -r file; do
+            dir=$(dirname "$file")
+            while IFS= read -r target; do
+              case "$target" in
+                ''|'#'*) continue ;;
+                *'://'* ) continue ;;
+              esac
+              checked=$((checked + 1))
+              clean="${target%%#*}"
+              resolved="$dir/$clean"
+              if [ ! -e "$resolved" ]; then
+                echo "::error file=$file::Broken link '$target' (expected $resolved)"
+                missing=$((missing + 1))
+                status=1
+              fi
+            done < <(awk '/^```/{in=!in;next} !in' "$file" | grep -oP '\]\([^)]*\)' | sed -E 's/^]\((.*)\)$/\1/')
+          done < <(find . -name '*.md' -not -path './.git/*' | sort)
+
+          echo "Checked $checked links, $missing missing."
+          exit $status
+
+      - name: Check registry consistency
+        shell: bash
+        run: |
+          set -uo pipefail
+          status=0
+
+          check_registry() {
+            local dir="$1" glob="$2" readme="$3"
+            local present registered missing orphans
+            present=$(find "$dir" -maxdepth 1 -name "$glob" ! -name 'README.md' -printf '%f\n' | sort -u)
+            registered=$(grep -oP '`[^`]+`|(?<=\]\()[^) ]+' "$readme" \
+              | tr -d '`' | sed 's#.*/##' | grep '\.md$' | grep -v 'NNN\|XXX' | sort -u)
+            missing=$(comm -23 <(printf '%s\n' "$registered") <(printf '%s\n' "$present"))
+            orphans=$(comm -13 <(printf '%s\n' "$registered") <(printf '%s\n' "$present"))
+            if [ -n "$missing" ]; then
+              echo "::error::Referenced in $readme but file missing:"
+              printf '%s\n' "$missing" | sed 's/^/  /'
+              status=1
+            fi
+            if [ -n "$orphans" ]; then
+              echo "::error::File present in $dir but not registered in $readme:"
+              printf '%s\n' "$orphans" | sed 's/^/  /'
+              status=1
+            fi
+            [ -z "$missing" ] && [ -z "$orphans" ] && echo "$dir registry OK"
+          }
+
+          check_registry "docs/contracts" "*.contract.md" "docs/contracts/README.md"
+          check_registry "docs/validation-scenarios" "*.md" "docs/validation-scenarios/README.md"
+          check_registry "docs/experiments" "EXP-*.md" "docs/experiments/README.md"
+
+          exit $status
+
+      - name: Check document metadata headers
+        shell: bash
+        run: |
+          set -uo pipefail
+          status=0
+
+          for f in docs/experiments/EXP-*.md; do
+            [ -f "$f" ] || continue
+            grep -q '^\*\*Status\*\*' "$f" || { echo "::error::$f missing '**Status**' header"; status=1; }
+          done
+
+          for f in docs/validation-scenarios/*.md; do
+            [ "$(basename "$f")" = "README.md" ] && continue
+            grep -q '^\*\*Status\*\*' "$f" || { echo "::error::$f missing '**Status**' header"; status=1; }
+          done
+
+          for f in docs/contracts/*.contract.md; do
+            if grep -q '^\*\*Estado\*\*' "$f"; then
+              grep -q '^\*\*Versión\*\*' "$f" || { echo "::error::$f missing '**Versión**' header"; status=1; }
+            elif ! grep -q '^\*\*Status\*\*' "$f"; then
+              echo "::error::$f missing '**Status**' or '**Estado**' header"
+              status=1
             fi
           done
-          echo "✓ All internal references valid"
+
+          [ "$status" -eq 0 ] && echo "All documents have the required metadata headers"
+          exit $status
