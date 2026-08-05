@@ -22,6 +22,7 @@ No theory. No implementation. No literary justification. Only the contract.
 | `Auditor.contract.md` | AuditorSystem | 3B.5 | Draft |
 | `IdentityReconstruction.contract.md` | IdentityReconstructionSystem | 3B.6 | Draft |
 | `CausalTrace.contract.md` | CausalTrace (observador transversal) | 3B transversal | Draft |
+| `Knowledge.contract.md` | KnowledgeUpdateSystem | 3X | Draft |
 
 ## Contract lifecycle
 

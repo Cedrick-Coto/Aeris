@@ -38,11 +38,29 @@
 |-----------|-------|--------|----------|------|
 | MemoryData models | M3 | S1.5 | Tests | M4: property-based |
 | BeliefData models | M3 | S1.5 | Tests | M4 |
-| KnowledgeData models | M3 | S1.5 | Tests | M4 |
+| KnowledgeData models | M3 | S1.5 | Tests, CONTRACT-KNOWLEDGE v0.1 | M4: property-based; migración a modelo contractual |
 | Emotion system | M3 | S1.5 | Tests | M4 |
 | Goal system | M3 | S1.5 | Tests | M4 |
 | Relationship system | M3 | S1.5 | Tests | M4 |
 | Attention system | M3 | S1.5 | Tests | M4 |
+
+**CONTRACT-KNOWLEDGE v0.1 — estado (2026-08-05)**:
+
+| Campo | Valor |
+|-------|-------|
+| Estado | Draft |
+| Validación | Aprobado metodológicamente |
+| Implementación | Pendiente |
+| Integración | Pendiente |
+
+**Definición**: subsistema de conocimiento declarado — pipeline (dato observado → evidencia estructurada → patrón identificado → conocimiento candidato → conocimiento aceptado), confianza epistemológica (soporte/consistencia/alcance), campos obligatorios, frontera KNOWLEDGE_BASE/DECISION_POLICY y estados refutado/limitado/deprecado.
+
+**Gaps conocidos**:
+- **K-G1 (Gobernanza, doc-18 §2)**: falta Specification en doc-17 (sección Knowledge) + Research Note/Hypothesis. Pendiente de sprint de arquitectura.
+- **K-G2 (Implementación)**: inconsistencia entre `KnowledgeData`/`KnowledgeCertainty` (ordinal) y el modelo contractual `KnowledgeEntry` (§4.1). Primer objetivo del sprint de implementación.
+- **K-G3 (Capacidad opcional)**: KB→hipótesis debe mantenerse como capacidad opcional; el conocimiento puede informar observación/pregunta de investigación, pero no genera hipótesis automáticamente ni es dependencia del ciclo experimental (CONTRACT-KNOWLEDGE §5.1).
+
+**Siguiente prioridad metodológica**: cerrar EXP-0002 (intercambiabilidad de ReasoningStrategy) antes de abrir el sprint de arquitectura de Knowledge.
 
 ### Semantic Layer (Sprint 2)
 

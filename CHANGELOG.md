@@ -6,6 +6,15 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Sprint 3X.3.2 — Reasoning Strategy Swap
+- **Bug fixes en `EvidenceBasedReasoningStrategy`** (regresión de `9e6646d`): matcher de CausalSequence ahora exige `hasEvent` + `hasPattern`; matcher de Contradiction detecta afirmaciones afirmativas/negativas y direcciones opuestas (north/south, east/west) con mismo sujeto y distinto entity-id. Clasificación: Bug (Categoría 1). `S_R003_ContradictionReported` y `CausalSequence_RuleFires` vuelven a pasar.
+- **`AlternativeReasoningStrategy`**: implementación alternativa de `IReasoningStrategy` (premisas por saliencia/score, agregación `SalienceAnchoredInference`), sin matching de keywords.
+- **`ReasoningInterchangeabilityTests`**: RI-001…RI-005 (contrato común, determinismo, sin side effects, localidad del efecto, pipeline completo).
+- **`docs/validation-scenarios/3X-model-interchangeability.md`**: escenarios RI-001…RI-005.
+- **`docs/experiments/EXP-0002.md`**: evidencia experimental de intercambiabilidad (completo).
+- Reemplazabilidad de la estrategia de razonamiento validada sin cambios de contrato, ADR ni infraestructura.
+- 5 tests nuevos; 329 totales, 0 failures (baseline 324 con 2 fallos), determinismo 19/19.
+
 ### Sprint 3A — Cognitive Infrastructure
 - **PerceptionSystem**: Structured Percept[] from world events, sensory filtering
 - **AttentionSystem**: Fixed computational budget, salience filtering, AffectState modulation

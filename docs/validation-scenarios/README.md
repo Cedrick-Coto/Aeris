@@ -15,6 +15,7 @@ No son tests. Son la **especificación del comportamiento esperado**. Los tests 
 | `3B-auditor.md` | 3B.5 — Auditor | Índice |
 | `3B-identity.md` | 3B.6 — Identity Reconstruction | Índice |
 | `3B-selfsnapshot.md` | 3B.7 — SelfSnapshot | Índice |
+| `3X-model-interchangeability.md` | 3X.3.2 — Reasoning Strategy Swap | Completo |
 
 ## Metodología
 
