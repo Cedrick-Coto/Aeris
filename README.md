@@ -1,141 +1,142 @@
 # Aeris
 
-**Motor de simulación cognitiva con capa narrativa para un mundo Pokémon.**
+**Deterministic cognitive simulation engine with emergent narrative for a Pokémon world.**
 
 [![CI](https://github.com/Cedrick-Coto/Aeris/actions/workflows/ci.yml/badge.svg)](https://github.com/Cedrick-Coto/Aeris/actions/workflows/ci.yml)
 [![Determinism](https://github.com/Cedrick-Coto/Aeris/actions/workflows/determinism.yml/badge.svg)](https://github.com/Cedrick-Coto/Aeris/actions/workflows/determinism.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com)
 
-Aeris no es un chatbot ni un juego con guion. Es un **simulador de mundo** donde la historia emerge como consecuencia de la simulación, no como producto de un prompt. El LLM no piensa: verbaliza el estado interno del agente.
+Aeris is not a chatbot or a scripted game. It's a **world simulator** where story emerges as a consequence of simulation, not as a product of a prompt. The LLM does not think: it verbalizes [...]
 
 ---
 
-## Principios Arquitectónicos
+## Architectural Principles
 
-- **ECS + Data-Oriented Design** como base del motor.
-- **Determinismo** como requisito del núcleo de simulación.
-- **Separación estricta** entre simulación, cognición, afecto y narrativa.
-- El **LLM nunca modifica el estado del mundo**; únicamente interpreta y expresa el estado interno.
-- El **Self** no es un componente: se reconstruye cada tick como `SelfSnapshot`.
-- El **afecto** es un vector continuo (curiosidad, estrés, confianza, etc.), no emociones discretas.
-- ACMA es un **módulo cognitivo experimental e intercambiable** (v1, v2, ...).
-- El proyecto implementa un **modelo funcional de agencia**, no afirma reproducir la conciencia humana.
+- **ECS + Data-Oriented Design** as the engine foundation.
+- **Determinism** as a requirement of the simulation core.
+- **Strict separation** between simulation, cognition, affect, and narrative.
+- The **LLM never modifies world state**; it only interprets and expresses internal state.
+- **Self is not a component**: it is reconstructed each tick as `SelfSnapshot`.
+- **Affect is a continuous vector** (curiosity, stress, trust, etc.), not discrete emotions.
+- **ACMA is an experimental, interchangeable cognitive module** (v1, v2, ...).
+- The project implements a **functional model of agency**, not a claim to reproduce human consciousness.
 
-### Estabilidad de decisiones
+### Decision Stability
 
-| Nivel | Ámbito | Cambios esperados |
+| Level | Scope | Expected Changes |
 |-------|--------|-------------------|
-| A0 | Principios epistemológicos | Muy excepcionales |
-| A1 | Axiomas cognitivos | Muy raros |
-| A2 | Arquitectura del motor | Poco frecuentes |
-| A3 | Plataforma e implementación | Frecuentes |
+| A0 | Epistemological principles | Exceptional |
+| A1 | Cognitive axioms | Rare |
+| A2 | Engine architecture | Infrequent |
+| A3 | Platform and implementation | Frequent |
 
-Ver [ADR hierarchy](docs/adr/README.md) para la clasificación completa.
+See [ADR hierarchy](docs/adr/README.md) for the complete classification.
 
 ---
 
-## Arquitectura
+## Architecture
 
 ```
-                         Mundo ECS
+                         ECS World
                             │
                       Simulation Tick
                             │
                      Semantic Extractor
                             │
-                 ┌──────────┴──────────┐
-                 │  Cognitive Infra.   │
-                 │  (mecanismos)       │
-                 │  Perception         │
-                 │  Attention          │
-                 │  Memory             │
-                 │  Affect (vector)    │
-                 │  Goals              │
-                 └──────────┬──────────┘
+                   ┌────────┴────────┐
+                   │ Cognitive Infra.│
+                   │ (mechanisms)    │
+                   │ Perception      │
+                   │ Attention       │
+                   │ Memory          │
+                   │ Affect (vector) │
+                   │ Goals           │
+                   └────────┬────────┘
                             │
-                 ┌──────────┴──────────┐
-                 │  Cognitive Model    │
-                 │  (teoría)           │
-                 │  ┌─ ACMA v1 ────┐   │
-                 │  │ Reasoning    │   │
-                 │  │ Planning     │   │
-                 │  │ Decision     │   │
-                 │  │ Auditor      │   │
-                 │  │ Identity     │   │
-                 │  │ World Model  │   │
-                 │  └──────────────┘   │
-                 └──────────┬──────────┘
+                   ┌────────┴────────┐
+                   │ Cognitive Model │
+                   │ (theory)        │
+                   │ ┌─ ACMA v1 ───┐ │
+                   │ │ Reasoning   │ │
+                   │ │ Planning    │ │
+                   │ │ Decision    │ │
+                   │ │ Auditor     │ │
+                   │ │ Identity    │ │
+                   │ │ World Model │ │
+                   │ └─────────────┘ │
+                   └────────┬────────┘
                             │
-                    SelfSnapshot
-                 (existe solo este tick)
+                     SelfSnapshot
+                  (exists only this tick)
                             │
-                 ┌──────────┴──────────┐
-                 │  Narrative Pipeline │
-                 └──────────┬──────────┘
+                   ┌────────┴────────┐
+                   │ Narrative       │
+                   │ Pipeline        │
+                   └────────┬────────┘
                             │
                           LLM
                             │
-                  Narrativa / Diálogo
+                  Narrative / Dialogue
 ```
 
-El LLM opera sobre la **frontera determinismo/probabilismo**: recibe `SelfSnapshot` + `SemanticState` deterministas y produce narrativa probabilística. Nunca modifica el estado interno del agente.
+The LLM operates at the **determinism/probabilism boundary**: it receives deterministic `SelfSnapshot` + `SemanticState` and produces probabilistic narrative. It never modifies the agent's internal state [...]
 
-La **Cognitive Infrastructure** proporciona mecanismos generales (percepción, atención, memoria, afecto vectorial, goals). El **Cognitive Model** (ACMA v1, v2, ...) implementa una teoría cognitiva concreta sobre esa infraestructura. Separar ambas capas permite intercambiar modelos sin cambiar el motor.
+**Cognitive Infrastructure** provides general mechanisms (perception, attention, memory, affect vectorization, goals). **Cognitive Model** (ACMA v1, v2, ...) implements a cognitive theory [...]
 
-Para una descripción detallada de cada subsistema: [`docs/16-agent-architecture.md`](docs/16-agent-architecture.md).
+For a detailed description of each subsystem: [`docs/16-agent-architecture.md`](docs/16-agent-architecture.md).
 
 ---
 
-## Stack Tecnológico
+## Technology Stack
 
-| Componente | Tecnología |
+| Component | Technology |
 |------------|------------|
-| Lenguaje | C# (.NET 10.0) |
-| Paradigma | ECS (Entity Component System) + Data-Oriented Design |
+| Language | C# (.NET 10.0) |
+| Paradigm | ECS (Entity Component System) + Data-Oriented Design |
 | ECS Library | [Arch](https://github.com/genaray/Arch) |
 | Tests | xUnit + FsCheck (property-based) + FluentAssertions |
-| Persistencia | SQLite + JSON |
+| Persistence | SQLite + JSON |
 | LLM | Provider-agnostic (OpenAI, Claude, Ollama, etc.) |
 
 ---
 
-## Roadmap de Desarrollo
+## Development Roadmap
 
 ```
 Sprint 0 ──► Sprint 1 ──► Sprint 2 ──► Sprint 3A ──► Sprint 3B ──► Sprint 3C ──► Sprint 4 ──► Sprint 5 ──► Sprint 6 ──► Sprint 7
-Arquitec.    Motor ECS    Sem. Extr.   Infra.       ACMA v1      Observa-     LLM          Narrativa    Mundo Pok.   Aeris
-(FROZEN)     (COMPL.)     (COMPL.)     Cognitiva    (En          bilidad      (Verbaliz.)  (Pipeline)   (Modelado)   (Personaje)
-                                        (COMPL.)    progreso)    (Planeado)   (Planeado)   (Planeado)   (Planeado)   (Planeado)
+Architec.    ECS Motor    Sem. Extr.   Cognitive   ACMA v1      Observa-     LLM          Narrative    Pokémon     Aeris
+(FROZEN)     (COMPL.)     (COMPL.)     Infra.      (In progress)bility       (Verbaliz.)  (Pipeline)   (Modeling)  (Character)
+                                       (COMPL.)                  (Planned)    (Planned)    (Planned)    (Planned)   (Planned)
 ```
 
-| Sprint   | Estado        | Objetivo                                                                                       |
+| Sprint   | Status        | Goal                                                                                       |
 | -------- | ------------- | ---------------------------------------------------------------------------------------------- |
-| Sprint 0 | ✅ Frozen      | Especificación arquitectónica y ADRs                                                           |
-| Sprint 1 | ✅ Complete    | Motor ECS determinista (World, Systems, EventBus, Scheduler, Persistence)                      |
-| Sprint 2 | ✅ Complete    | Semantic Extractor (extraer estado del mundo → SemanticState para el LLM)                      |
-| Sprint 3A| ✅ Complete    | Infraestructura cognitiva (7 sistemas ECS deterministas, 210 tests)                            |
-| Sprint 3B| 🔄 In progress | ACMA v1 — 3B.1 Memory Retrieval ✅, 3B.2 Reasoning ✅, 3B.3 Planning ✅ (baseline + EXP-0004), 3B.4–3B.6 pendientes |
-| Sprint 3C| ⏳ Planned     | Observabilidad (SelfSnapshot Inspector, Decision Trace, Reason Trace, etc.)                    |
-| Sprint 4 | ⏳ Planned     | Integración LLM (verbalizador, no pensador)                                                    |
-| Sprint 5 | ⏳ Planned     | Narrativa (Diálogo, Monólogo interno, Narración contextual)                                    |
-| Sprint 6 | ⏳ Planned     | Mundo Pokémon (Biología, Aura, Ecosistemas, Cultura, Lenguaje, Facciones)                      |
-| Sprint 7 | ⏳ Planned     | Aeris (Personaje completo e integración final)                                                 |
+| Sprint 0 | ✅ Frozen      | Architectural specification and ADRs                                                           |
+| Sprint 1 | ✅ Complete    | Deterministic ECS engine (World, Systems, EventBus, Scheduler, Persistence)                      |
+| Sprint 2 | ✅ Complete    | Semantic Extractor (extract world state → SemanticState for LLM)                              |
+| Sprint 3A| ✅ Complete    | Cognitive infrastructure (7 deterministic ECS systems, 210 tests)                            |
+| Sprint 3B| 🔄 In progress | ACMA v1 — 3B.1 Memory Retrieval ✅, 3B.2 Reasoning ✅, 3B.3 Planning ✅ (baseline + EXP-0004), 3B.4–3B.6 pending |
+| Sprint 3C| ⏳ Planned     | Observability (SelfSnapshot Inspector, Decision Trace, Reason Trace, etc.)                    |
+| Sprint 4 | ⏳ Planned     | LLM integration (verbalizer, not thinker)                                                    |
+| Sprint 5 | ⏳ Planned     | Narrative (Dialogue, Internal Monologue, Contextual Narration)                                   |
+| Sprint 6 | ⏳ Planned     | Pokémon World (Biology, Aura, Ecosystems, Culture, Language, Factions)                      |
+| Sprint 7 | ⏳ Planned     | Aeris (Complete character and final integration)                                                 |
 
 ---
 
-## Cómo contribuir
+## How to Contribute
 
-1. Lee [`CONTRIBUTING.md`](CONTRIBUTING.md)
-2. Revisa los [`docs/adr/`](docs/adr/) para entender las decisiones arquitectónicas
-3. Explora [`docs/hypotheses/`](docs/hypotheses/) para ver hipótesis de investigación activas
-4. Abre un issue o envía un PR
+1. Read [`CONTRIBUTING.md`](CONTRIBUTING.md)
+2. Review [`docs/adr/`](docs/adr/) to understand architectural decisions
+3. Explore [`docs/hypotheses/`](docs/hypotheses/) to see active research hypotheses
+4. Open an issue or submit a PR
 
-Toda contribución debe respetar los 6 principios arquitectónicos (determinismo, presión de causalidad, trazabilidad, contrato computacional, localidad causal, modulación afectiva).
+All contributions must respect the 6 architectural principles (determinism, causal pressure, traceability, computational contract, causal locality, affective modulation).
 
 ---
 
-## Construcción
+## Build
 
 ```bash
 # Clone
@@ -151,10 +152,10 @@ dotnet test
 dotnet run --project benchmarks/Aeris.Benchmarks -c Release
 ```
 
-**Requiere**: [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+**Requires**: [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 
 ---
 
-## Licencia
+## License
 
-[GPL-3.0](LICENSE). Ver [`SECURITY.md`](SECURITY.md) para reportar vulnerabilidades.
+[GPL-3.0](LICENSE). See [`SECURITY.md`](SECURITY.md) to report vulnerabilities.
