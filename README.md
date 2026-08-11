@@ -106,8 +106,9 @@ For a detailed description of each subsystem: [`docs/16-agent-architecture.md`](
 ```
 Sprint 0 ──► Sprint 1 ──► Sprint 2 ──► Sprint 3A ──► Sprint 3B ──► Sprint 3C ──► Sprint 4 ──► Sprint 5 ──► Sprint 6 ──► Sprint 7
 Architec.    ECS Motor    Sem. Extr.   Cognitive   ACMA v1      Observa-     LLM          Narrative    Pokémon     Aeris
-(FROZEN)     (COMPL.)     (COMPL.)     Infra.      (In progress)bility       (Verbaliz.)  (Pipeline)   (Modeling)  (Character)
-                                       (COMPL.)                  (Planned)    (Planned)    (Planned)    (Planned)   (Planned)
+(REST.)     (PEND.)     (PEND.)     Infra.      (PEND.
+)		bility       (Verbaliz.)  (Pipeline)   (Modeling)  (Character)
+                                       (PEND.)                  (Planned)    (Planned)    (Planned)    (Planned)   (Planned)
 ```
 
 | Sprint   | Status        | Goal                                                                                       |
